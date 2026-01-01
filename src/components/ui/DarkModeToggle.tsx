@@ -1,10 +1,12 @@
 "use client";
 import { Moon, Sun } from "lucide-react";
-import React, { useState } from "react";
+import { useLocale } from "next-intl";
+import { useState } from "react";
 
 const DarkModeToggle = () => {
   const [isDark, setIsDark] = useState(true);
 
+  const locale = useLocale();
   return (
     <div
       onClick={() => {
@@ -15,7 +17,13 @@ const DarkModeToggle = () => {
     >
       <div
         className={`bg-gray-400/40 w-fit rounded-2xl p-0.75 ${
-          isDark ? "translate-x-0" : "translate-x-[calc(100%+9.5px)]"
+          isDark
+            ? "translate-x-0"
+            : `${
+                locale === "en"
+                  ? "translate-x-[calc(100%+9.5px)]"
+                  : "-translate-x-[calc(100%+9.5px)]"
+              }`
         } transition`}
       >
         {isDark ? <Moon size={13} /> : <Sun size={13} />}
