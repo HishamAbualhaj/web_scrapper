@@ -1,0 +1,55 @@
+{
+  "sidebar": {
+    "analytics": "Analytics",
+    "stores": "Stores",
+    "products": "Products"
+  },
+  "cards": {
+    "Total Stores": "Total Stores",
+    "Total Products": "Total Products"
+  },
+  "table": {
+    "title": "Product Name",
+    "image": "Image",
+    "price": "Price",
+    "oldPrice": "Old Price",
+    "discount": "Discount",
+    "rating": "Rating",
+    "stock": "Stock",
+    "badge": "Badges",
+    "nudge": "Nudges",
+    "NotFound": "Not Found"
+  },
+  "actions": {
+    "delete": "Delete"
+  },
+  "filter": {
+    "name": "Product name",
+    "badge": "Badge",
+    "badge_all": "All badges",
+    "badge_best": "Best",
+    "badge_popular": "Popular",
+
+    "discount": "Discount",
+    "discount_all": "All",
+    "discount_with": "With discount",
+
+    "reviews": "Reviews",
+    "reviews_all": "All ratings",
+    "reviews_3": "3★ & up",
+    "reviews_4": "4★ & up",
+
+    "stock": "Min stock",
+
+    "reset": "Reset",
+    "apply": "Apply filters"
+  },
+  "Showing Product details": "Product Details",
+  "auth": {
+    "Log out": "Log out",
+    "Log In": "Log in"
+  },
+  "hello": "Welcome",
+  "dashboard": "Dashboard",
+  "language": "Language"
+}

@@ -1,0 +1,56 @@
+{
+  "sidebar": {
+    "analytics": "الإحصائيات",
+    "stores": "المتاجر",
+    "products": "المنتجات"
+  },
+  "cards": {
+    "Total Stores": "إجمالي المتاجر",
+    "Total Products": "إجمالي المنتجات"
+  },
+  "table": {
+    "title": "اسم المنتج",
+    "image": "الصورة",
+    "price": "السعر",
+    "oldPrice": "السعر القديم",
+    "discount": "الخصم",
+    "rating": "التقييم",
+    "stock": "المخزون",
+    "badge": "الشارات",
+    "nudge": "تنبيهات",
+    "NotFound": "لا يوجد"
+  },
+  "actions": {
+    "delete": "حذف",
+    "open": "افتح"
+  },
+  "filter": {
+    "name": "اسم المنتج",
+    "badge": "التصنيف",
+    "badge_all": "كل التصنيفات",
+    "badge_best": "الأفضل",
+    "badge_popular": "الأكثر شعبية",
+
+    "discount": "الخصم",
+    "discount_all": "الكل",
+    "discount_with": "مع خصم",
+
+    "reviews": "التقييم",
+    "reviews_all": "كل التقييمات",
+    "reviews_3": "3 نجوم فأكثر",
+    "reviews_4": "4 نجوم فأكثر",
+
+    "stock": "الكمية المتوفرة",
+
+    "reset": "إعادة تعيين",
+    "apply": "تطبيق الفلاتر"
+  },
+  "Showing Product details": "تفاصيل المنتج",
+  "auth": {
+    "Log out": "تسجيل الخروج",
+    "Log In": "تسجيل الدخول"
+  },
+  "hello": "مرحبا بك",
+  "dashboard": "لوحة التحكم",
+  "language": "اللغة"
+}
