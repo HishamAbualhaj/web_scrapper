@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Cairo, Montserrat } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { localeDirection, locales } from "@/i18n";
 
 import "./globals.css";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -19,20 +22,23 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: "en" | "ar" }>;
 }>) {
-  const isArabic = false;
+
+
+  const locale = (await params).locale;
+  const dir = localeDirection[locale];
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`antialiased ${
-          isArabic ? cairo.className : montserrat.className
-        }`}
-      >
-        {children}
+    <html lang={locale} dir={dir}>
+      <body className={`${cairo.variable} ${montserrat.variable}`}>
+        <NextIntlClientProvider>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );
