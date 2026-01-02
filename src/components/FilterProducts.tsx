@@ -35,7 +35,7 @@ export default function ProductTableFilters() {
   const [filters, setFilters] = useState<ProductFilters>(INITIAL_FILTERS);
 
   return (
-    <Card className="m-4 rounded-md">
+    <Card className="rounded-md">
       <CardContent className="p-4">
         {/* Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">

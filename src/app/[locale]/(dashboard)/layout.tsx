@@ -18,7 +18,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
       <AppSidebar side={locale === "en" ? "left" : "right"} variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        {children}
+        <div className="p-10">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
