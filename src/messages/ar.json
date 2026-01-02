@@ -18,7 +18,8 @@
     "stock": "المخزون",
     "badge": "الشارات",
     "nudge": "تنبيهات",
-    "NotFound": "لا يوجد"
+    "NotFound": "لا يوجد",
+    "NoResults": "لا يوجد نتائج لعرضها"
   },
   "actions": {
     "delete": "حذف",
@@ -49,6 +50,51 @@
   "auth": {
     "Log out": "تسجيل الخروج",
     "Log In": "تسجيل الدخول"
+  },
+  "stores": {
+    "title": "المتاجر",
+    "description": "إدارة المتاجر والمنتجات الخاصة بها",
+    "addStore": "إضافة متجر",
+    "fields": {
+      "urlPlaceholder": "رابط المتجر (إلزامي)",
+      "nameOptional": "اسم المتجر (اختياري)"
+    },
+    "productsCount": "{count} منتج",
+    "createdAt": "تم الإنشاء في {date}",
+    "actions": {
+      "viewProducts": "عرض المنتجات",
+      "edit": "تعديل المتجر",
+      "delete": "حذف المتجر",
+      "create": "إنشاء متجر"
+    },
+    "empty": {
+      "title": "لا يوجد متاجر",
+      "description": "قم بإنشاء متجرك الأول لبدء إضافة المنتجات"
+    },
+    "analytics": {
+      "productsCount": "عدد المنتجات لكل متجر",
+      "avgPrice": "متوسط السعر لكل متجر",
+      "avgDiscount": "متوسط الخصم لكل متجر",
+      "combined": "مقارنة السعر مقابل الخصم",
+      "totalStores": "إجمالي المتاجر",
+      "totalProducts": "إجمالي المنتجات",
+      "globalAvgPrice": "متوسط السعر العام",
+      "globalAvgDiscount": "متوسط الخصم العام"
+    }
+  },
+  "products": {
+    "delete": {
+      "title": "حذف المنتج",
+      "description": "هل أنت متأكد من حذف {name}؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "حذف",
+      "cancel": "إلغاء",
+      "thisProduct": "هذا المنتج"
+    }
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "action": "العودة للصفحة الرئيسية"
   },
   "hello": "مرحبا بك",
   "dashboard": "لوحة التحكم",

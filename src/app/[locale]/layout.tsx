@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Cairo, Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { localeDirection, locales } from "@/i18n";
+import { localeDirection } from "@/i18n";
 
-import "./globals.css";
-import { notFound } from "next/navigation";
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -29,16 +28,12 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale: "en" | "ar" }>;
 }>) {
-
-
   const locale = (await params).locale;
   const dir = localeDirection[locale];
   return (
     <html lang={locale} dir={dir}>
       <body className={`${cairo.variable} ${montserrat.variable}`}>
-        <NextIntlClientProvider>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );

@@ -35,7 +35,7 @@ export function NavMain({
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center gap-2">
-            <Link className="w-full" href="/">
+            <Link className="w-full" href={`/${pathname.split("/")[1]}/dashboard`}>
               <SidebarMenuButton
                 tooltip="Quick Create"
                 className={`text-gray-900 py-5 ${

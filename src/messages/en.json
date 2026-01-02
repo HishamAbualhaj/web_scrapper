@@ -18,7 +18,8 @@
     "stock": "Stock",
     "badge": "Badges",
     "nudge": "Nudges",
-    "NotFound": "Not Found"
+    "NotFound": "Not Found",
+    "NoResults": "No results."
   },
   "actions": {
     "delete": "Delete"
@@ -36,8 +37,8 @@
 
     "reviews": "Reviews",
     "reviews_all": "All ratings",
-    "reviews_3": "3★ & up",
-    "reviews_4": "4★ & up",
+    "reviews_3": "3 & up",
+    "reviews_4": "4 & up",
 
     "stock": "Min stock",
 
@@ -48,6 +49,51 @@
   "auth": {
     "Log out": "Log out",
     "Log In": "Log in"
+  },
+  "stores": {
+    "title": "Stores",
+    "description": "Manage your stores and their products",
+    "addStore": "Add Store",
+    "fields": {
+      "urlPlaceholder": "Store URL (required)",
+      "nameOptional": "Store name (optional)"
+    },
+    "productsCount": "{count} Products",
+    "createdAt": "Created on {date}",
+    "actions": {
+      "viewProducts": "View Products",
+      "edit": "Edit Store",
+      "delete": "Delete Store",
+      "create": "Create Store"
+    },
+    "empty": {
+      "title": "No stores found",
+      "description": "Create your first store to start adding products"
+    },
+    "analytics": {
+      "productsCount": "Products per Store",
+      "avgPrice": "Average Price per Store",
+      "avgDiscount": "Average Discount per Store",
+      "combined": "Price vs Discount Comparison",
+      "totalStores": "Total Stores",
+      "totalProducts": "Total Products",
+      "globalAvgPrice": "Global Avg Price",
+      "globalAvgDiscount": "Global Avg Discount"
+    }
+  },
+  "products": {
+    "delete": {
+      "title": "Delete product",
+      "description": "Are you sure you want to delete {name}? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "thisProduct": "this product"
+    }
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "Sorry, the page you are looking for does not exist or has been moved.",
+    "action": "Go Back Home"
   },
   "hello": "Welcome",
   "dashboard": "Dashboard",
