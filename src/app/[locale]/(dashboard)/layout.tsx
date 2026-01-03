@@ -1,10 +1,12 @@
+"use client";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getLocale } from "next-intl/server";
+import { DirectionProvider } from "@radix-ui/react-direction";
+import { useLocale } from "next-intl";
 
-const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
-  const locale = await getLocale();
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  const locale = useLocale();
 
   return (
     <SidebarProvider
@@ -18,7 +20,9 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
       <AppSidebar side={locale === "en" ? "left" : "right"} variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="p-10">{children}</div>
+        <DirectionProvider dir={locale === "ar" ? "rtl" : "ltr"}>
+          <div className="p-10">{children}</div>
+        </DirectionProvider>
       </SidebarInset>
     </SidebarProvider>
   );
