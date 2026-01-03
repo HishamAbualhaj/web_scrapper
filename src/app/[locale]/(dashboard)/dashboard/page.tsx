@@ -1,10 +1,10 @@
+import PriceAnalyticsCharts from "@/components/analytics/price-analytics-charts";
+import SelectionData from "@/components/analytics/selection-data";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 
 import { SectionCards } from "@/components/section-cards";
-import { getLocale } from "next-intl/server";
 
-export default async function Page() {
-  const locale = await getLocale();
+export default function Page() {
 
   return (
     <div className="flex flex-1 flex-col">
@@ -13,6 +13,10 @@ export default async function Page() {
           <SectionCards />
           <div className="">
             <ChartAreaInteractive />
+          </div>
+          <div className="border rounded-md p-4">
+            <SelectionData />
+            <PriceAnalyticsCharts />
           </div>
         </div>
       </div>
