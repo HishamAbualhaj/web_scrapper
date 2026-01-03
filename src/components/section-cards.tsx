@@ -14,7 +14,7 @@ import { Package, Store, TrendingUp, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 export function SectionCards() {
-  const t = useTranslations('cards');
+  const t = useTranslations("cards");
   const stats = [
     {
       title: t("Total Products"),
@@ -27,12 +27,12 @@ export function SectionCards() {
       title: t("Total Stores"),
       value: "80",
       icon: <Store className="h-5 w-5" />,
-      color: "text-chart-3",
-      bgColor: "bg-chart-3/10",
+      color: "text-primary",
+      bgColor: "bg-primary/10",
     },
   ];
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
       {stats.map((stat, index) => (
         <Card key={index} className="border-border py-0">
           <CardContent className="p-4">

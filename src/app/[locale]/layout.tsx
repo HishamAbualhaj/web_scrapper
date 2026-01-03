@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Cairo, Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { localeDirection } from "@/i18n";
-
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
