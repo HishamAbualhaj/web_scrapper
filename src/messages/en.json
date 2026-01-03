@@ -64,13 +64,17 @@
       "viewProducts": "View Products",
       "edit": "Edit Store",
       "delete": "Delete Store",
-      "create": "Create Store"
+      "create": "Create Store",
+      "selectStore": "Select store",
+      "placeholder": "Choose store"
     },
     "empty": {
       "title": "No stores found",
       "description": "Create your first store to start adding products"
     },
     "analytics": {
+      "price": "Price",
+      "date": "Date",
       "productsCount": "Products per Store",
       "avgPrice": "Average Price per Store",
       "avgDiscount": "Average Discount per Store",
@@ -82,6 +86,11 @@
     }
   },
   "products": {
+    "choose": "Choose product to show analytics?",
+    "selectProduct": "Select product",
+    "placeholder": "Choose product",
+    "search": "Search product...",
+    "noResults": "No products found",
     "delete": {
       "title": "Delete product",
       "description": "Are you sure you want to delete {name}? This action cannot be undone.",
