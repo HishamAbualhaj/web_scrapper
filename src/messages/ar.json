@@ -67,7 +67,8 @@
       "delete": "حذف المتجر",
       "create": "إنشاء متجر",
       "selectStore": "اختر المتجر",
-      "placeholder": "اختر متجرًا"
+      "placeholder": "اختر متجرًا",
+      "validationError": "قم بإختيار متجر !"
     },
     "empty": {
       "title": "لا يوجد متاجر",
@@ -87,17 +88,26 @@
     }
   },
   "products": {
+    "add": "أَضف منتجا",
     "choose": "إختار منتج لعرض التحليلات؟",
     "selectProduct": "اختر المنتج",
     "placeholder": "اختر منتجًا",
     "search": "ابحث عن منتج...",
     "noResults": "لا توجد منتجات",
+    "fields": {
+      "urlPlaceholder": "معرف المنتج (إلزامي)"
+    },
     "delete": {
       "title": "حذف المنتج",
       "description": "هل أنت متأكد من حذف {name}؟ لا يمكن التراجع عن هذا الإجراء.",
       "confirm": "حذف",
       "cancel": "إلغاء",
       "thisProduct": "هذا المنتج"
+    },
+    "actions": {
+      "delete": "حذف المنتج",
+      "create": "إضافة منتج",
+      "selectStore": "اختر منتج"
     }
   },
   "notFound": {

@@ -66,7 +66,8 @@
       "delete": "Delete Store",
       "create": "Create Store",
       "selectStore": "Select store",
-      "placeholder": "Choose store"
+      "placeholder": "Choose store",
+      "validationError": "Please select a store!"
     },
     "empty": {
       "title": "No stores found",
@@ -86,17 +87,26 @@
     }
   },
   "products": {
+    "add":"Add a product",
     "choose": "Choose product to show analytics?",
     "selectProduct": "Select product",
     "placeholder": "Choose product",
     "search": "Search product...",
     "noResults": "No products found",
+    "fields": {
+      "urlPlaceholder": "Product ID (required)"
+    },
     "delete": {
       "title": "Delete product",
       "description": "Are you sure you want to delete {name}? This action cannot be undone.",
       "confirm": "Delete",
       "cancel": "Cancel",
       "thisProduct": "this product"
+    },
+    "actions": {
+      "delete": "Delete product",
+      "create": "Create a product",
+      "selectStore": "Select a product"
     }
   },
   "notFound": {

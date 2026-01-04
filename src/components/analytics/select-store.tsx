@@ -14,9 +14,10 @@ type Props = {
   stores: Store[];
   value?: string;
   onChange: (storeId: string) => void;
+  error?: string | null;
 };
 
-const SelectStore = ({ stores, value, onChange }: Props) => {
+const SelectStore = ({ stores, value, onChange, error }: Props) => {
   const t = useTranslations("stores.actions");
 
   return (
@@ -24,7 +25,9 @@ const SelectStore = ({ stores, value, onChange }: Props) => {
       <div className="text-muted-foreground">{t("selectStore")}</div>
 
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="min-w-52">
+        <SelectTrigger
+          className={`min-w-52 ${error ? "border-destructive" : ""}`}
+        >
           <SelectValue placeholder={t("placeholder")} />
         </SelectTrigger>
         <SelectContent>
@@ -35,6 +38,9 @@ const SelectStore = ({ stores, value, onChange }: Props) => {
           ))}
         </SelectContent>
       </Select>
+      {error && (
+        <div className="text-destructive text-sm">{t("validationError")}</div>
+      )}
     </div>
   );
 };
