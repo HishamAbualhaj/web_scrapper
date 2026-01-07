@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useQueryState } from "nuqs";
 
 type Product = {
   id: string;
@@ -31,7 +32,8 @@ const SelectProduct = ({ products, onSelect }: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string>("");
 
-  const selected = products.find((p) => p.id === value);
+  const [product, setProduct] = useQueryState("product");
+  const selected = products.find((p) => p.id === product);
 
   return (
     <div className="space-y-2 max-w-96">
@@ -61,7 +63,7 @@ const SelectProduct = ({ products, onSelect }: Props) => {
                   onSelect={() => {
                     setValue(product.id);
                     setOpen(false);
-                    onSelect(product.id);
+                    setProduct(product.id);
                   }}
                 >
                   {product.title}
