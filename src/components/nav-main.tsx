@@ -40,7 +40,7 @@ export function NavMain({
                 tooltip="Quick Create"
                 className={`text-gray-900 py-5 ${
                   isAnalyticsActive && "bg-primary"
-                } font-bold hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear`}
+                } font-bold hover:bg-primary/90 hover:text-primary-foreground dark:text-white! active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear`}
               >
                 <ChartColumnDecreasing />
                 <span>{t("analytics")}</span>
@@ -55,7 +55,7 @@ export function NavMain({
                 <SidebarMenuButton
                   className={`text-gray-900 py-5 ${
                     item.isActive && "bg-primary"
-                  } font-bold hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear`}
+                  } font-bold hover:bg-primary/90 hover:text-primary-foreground dark:text-white! active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear`}
                   tooltip={item.title}
                 >
                   {item.icon && <item.icon />}
