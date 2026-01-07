@@ -9,22 +9,26 @@ import {
 } from "@/components/ui/select";
 import type { Store } from "@/data/stores";
 import { useTranslations } from "next-intl";
-
+import { useQueryState } from "nuqs";
 type Props = {
   stores: Store[];
   value?: string;
-  onChange: (storeId: string) => void;
   error?: string | null;
 };
 
-const SelectStore = ({ stores, value, onChange, error }: Props) => {
+const SelectStore = ({ stores, value, error }: Props) => {
+  const [storeId, setStoreId] = useQueryState("store", {
+    defaultValue: "general",
+    shallow: true,
+  });
+
   const t = useTranslations("stores.actions");
 
   return (
     <div className="space-y-2 max-w-96">
       <div className="text-muted-foreground">{t("selectStore")}</div>
 
-      <Select value={value} onValueChange={onChange}>
+      <Select value={value} onValueChange={setStoreId}>
         <SelectTrigger
           className={`min-w-52 ${error ? "border-destructive" : ""}`}
         >

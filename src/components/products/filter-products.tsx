@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { parseAsString, useQueryState, useQueryStates } from "nuqs";
 
 export type ProductFilters = {
   name: string;
@@ -21,18 +22,28 @@ export type ProductFilters = {
   minReview: "all" | "3" | "4";
 };
 
-const INITIAL_FILTERS: ProductFilters = {
-  name: "",
-  badge: "all",
-  discount: "all",
-  minStock: "",
-  minReview: "all",
-};
-
 export default function ProductTableFilters() {
   const t = useTranslations("filter");
   const locale = useLocale();
-  const [filters, setFilters] = useState<ProductFilters>(INITIAL_FILTERS);
+
+  const [name, setName] = useQueryState("name", { defaultValue: "" });
+  const [badge, setBadge] = useQueryState("badge", { defaultValue: "all" });
+  const [discount, setDiscount] = useQueryState("discount", {
+    defaultValue: "all",
+  });
+  const [minReview, setMinReview] = useQueryState("review", {
+    defaultValue: "all",
+  });
+  const [minStock, setMinStock] = useQueryState("stock", { defaultValue: "" });
+  const [, setFilters] = useQueryStates({
+    name: parseAsString.withDefault(""),
+    badge: parseAsString.withDefault("all"),
+    discount: parseAsString.withDefault("all"),
+    review: parseAsString.withDefault("all"),
+    stock: parseAsString.withDefault(""),
+    store: parseAsString.withDefault("all"),
+  });
+  const resetAll = () => setFilters(null);
 
   return (
     <Card className="rounded-md">
@@ -42,19 +53,12 @@ export default function ProductTableFilters() {
           {/* Product Name */}
           <Input
             placeholder={t("name")}
-            value={filters.name}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, name: e.target.value }))
-            }
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
 
           {/* Badge */}
-          <Select
-            value={filters.badge}
-            onValueChange={(value: ProductFilters["badge"]) =>
-              setFilters((prev) => ({ ...prev, badge: value }))
-            }
-          >
+          <Select value={badge} onValueChange={setBadge}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Badge" />
             </SelectTrigger>
@@ -66,12 +70,7 @@ export default function ProductTableFilters() {
           </Select>
 
           {/* Discount */}
-          <Select
-            value={filters.discount}
-            onValueChange={(value: ProductFilters["discount"]) =>
-              setFilters((prev) => ({ ...prev, discount: value }))
-            }
-          >
+          <Select value={discount} onValueChange={setDiscount}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Discount" />
             </SelectTrigger>
@@ -82,12 +81,7 @@ export default function ProductTableFilters() {
           </Select>
 
           {/* Reviews */}
-          <Select
-            value={filters.minReview}
-            onValueChange={(value: ProductFilters["minReview"]) =>
-              setFilters((prev) => ({ ...prev, minReview: value }))
-            }
-          >
+          <Select value={minReview} onValueChange={setMinReview}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Reviews" />
             </SelectTrigger>
@@ -103,10 +97,8 @@ export default function ProductTableFilters() {
             type="number"
             min={0}
             placeholder={t("stock")}
-            value={filters.minStock}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, minStock: e.target.value }))
-            }
+            value={minStock}
+            onChange={(e) => setMinStock(e.target.value)}
           />
         </div>
 
@@ -116,7 +108,7 @@ export default function ProductTableFilters() {
             locale === "en" ? "justify-end" : "justify-start"
           } gap-2 border-t pt-4`}
         >
-          <Button variant="outline" onClick={() => setFilters(INITIAL_FILTERS)}>
+          <Button variant="outline" onClick={resetAll}>
             {t("reset")}
           </Button>
           <Button>{t("apply")}</Button>

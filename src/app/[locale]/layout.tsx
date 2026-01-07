@@ -3,7 +3,7 @@ import { Cairo, Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { localeDirection } from "@/i18n";
 import "@/styles/globals.css";
-
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Dashboard management for products",
@@ -32,7 +32,9 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir}>
       <body className={`${cairo.variable} ${montserrat.variable}`}>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NuqsAdapter>
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

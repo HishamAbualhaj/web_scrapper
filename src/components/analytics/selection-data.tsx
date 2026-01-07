@@ -1,19 +1,18 @@
-"use client"
+"use client";
 import SelectProduct from "@/components/analytics/select-product";
 import SelectStore from "@/components/analytics/select-store";
 import { stores } from "@/data/stores";
-import { useState } from "react";
+import { useQueryState } from "nuqs";
 const SelectionData = () => {
-  const [storeId, setStoreId] = useState<string>("");
-
-  const store = stores.find((s) => s.id === storeId);
+  const [store] = useQueryState("store");
+  const storeSelected = stores.find((s) => s.id === store);
   return (
     <div className="flex max-lg:flex-col gap-6">
-      <SelectStore stores={stores} value={storeId} onChange={setStoreId} />
+      <SelectStore stores={stores} value={store ?? ""} />
 
       {store && (
         <SelectProduct
-          products={store.products}
+          products={storeSelected?.products ?? []}
           onSelect={(productId) => {
             console.log("Selected product:", productId);
           }}
