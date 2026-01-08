@@ -52,7 +52,9 @@ const page = () => {
         }}
       />
       <ProductTableFilters />
-      <div className="py-5">{/* <DataTable data={data} />; */}</div>
+      <div className="py-5">
+        <DataTable data={data} />
+      </div>
     </>
   );
 };

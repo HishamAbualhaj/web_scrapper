@@ -9,6 +9,7 @@
     "Total Products": "Total Products"
   },
   "table": {
+    "storetitle": "Store Name",
     "title": "Product Name",
     "image": "Image",
     "price": "Price",
@@ -19,7 +20,8 @@
     "badge": "Badges",
     "nudge": "Nudges",
     "NotFound": "Not Found",
-    "NoResults": "No results."
+    "NoResults": "No results.",
+    "showAnalytics": "Show analytics"
   },
   "actions": {
     "delete": "Delete"
@@ -87,7 +89,7 @@
     }
   },
   "products": {
-    "add":"Add a product",
+    "add": "Add a product",
     "choose": "Choose product to show analytics?",
     "selectProduct": "Select product",
     "placeholder": "Choose product",

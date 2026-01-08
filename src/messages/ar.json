@@ -9,6 +9,7 @@
     "Total Products": "إجمالي المنتجات"
   },
   "table": {
+    "storetitle": "اسم المتجر",
     "title": "اسم المنتج",
     "image": "الصورة",
     "price": "السعر",
@@ -19,7 +20,8 @@
     "badge": "الشارات",
     "nudge": "تنبيهات",
     "NotFound": "لا يوجد",
-    "NoResults": "لا يوجد نتائج لعرضها"
+    "NoResults": "لا يوجد نتائج لعرضها",
+    "showAnalytics": "عرض الإحصائيات"
   },
   "actions": {
     "delete": "حذف",

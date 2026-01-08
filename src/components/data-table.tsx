@@ -92,22 +92,35 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel";
+import { Card, CardContent } from "./ui/card";
+import Link from "next/link";
 
 export const schema = z.object({
-  id: z.number(),
+  storeId: z.string(),
+  storeName: z.string(),
+  productId: z.string(),
   title: z.string(),
   originalPrice: z.string(),
   price: z.string(),
   discount: z.string(),
   rating: z.string(),
+  reviewCount: z.string(),
   stockInfo: z.string(),
   images: z.array(z.string()),
+  productUrl: z.string(),
   badge: z.string(),
   nudges: z.array(z.string()),
 });
 
 // Create a separate component for the drag handle
-function DragHandle({ id }: { id: number }) {
+function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({
     id,
   });
@@ -130,36 +143,14 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     id: "drag",
     header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
+    cell: ({ row }) => <DragHandle id={row.original.productId} />,
   },
-
   {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
+    accessorKey: "storetitle",
+    header: ({ table }) => table.options.meta?.t?.("table.storetitle"),
+    cell: ({ row }) => row.original.storeName,
     enableHiding: false,
   },
-
   {
     accessorKey: "title",
     header: ({ table }) => table.options.meta?.t?.("table.title"),
@@ -192,7 +183,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "rating",
     header: ({ table }) => table.options.meta?.t?.("table.rating"),
-    cell: ({ row }) => row.original.rating,
+    cell: ({ row }) => row.original.reviewCount,
   },
 
   {
@@ -224,7 +215,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
 
   {
     id: "actions",
-    cell: ({ table }) => (
+    cell: ({ row, table }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -239,6 +230,13 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
+          <Link
+            href={`/dashboard?store=${row.original.storeId}&product=${row.original.productId}`}
+          >
+            <DropdownMenuItem>
+              {table.options.meta?.t?.("table.showAnalytics")}
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem variant="destructive">
             {table.options.meta?.t?.("actions.delete")}
           </DropdownMenuItem>
@@ -250,7 +248,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.id,
+    id: row.original.productId,
   });
 
   return (
@@ -299,7 +297,7 @@ export function DataTable({
 
   const t = useTranslations();
   const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id) || [],
+    () => data?.map(({ productId }) => productId) || [],
     [data]
   );
 
@@ -316,7 +314,7 @@ export function DataTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) => row.productId.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -410,10 +408,6 @@ export function DataTable({
           </DndContext>
         </div>
         <div className="flex items-center justify-between px-4">
-          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
               <Label htmlFor="rows-per-page" className="text-sm font-medium">
@@ -508,8 +502,10 @@ export function DataTable({
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   const t = useTranslations();
+  const locale = useLocale();
   const isMobile = useIsMobile();
 
+  const isRTL = locale === "ar";
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
@@ -517,14 +513,41 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           {item.title}
         </Button>
       </DrawerTrigger>
+
       <DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.title}</DrawerTitle>
           <DrawerDescription>{t("Showing Product details")}</DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm"></div>
-        <div className="border">
-          <Image width={400} alt="" height={400} src={item.images[0]} />
+
+        {/* Carousel */}
+        <div className="relative px-4">
+          <Carousel
+            className="w-full"
+            opts={{
+              direction: isRTL ? "rtl" : "ltr",
+            }}
+          >
+            <CarouselContent>
+              {item.images.map((i, index) => (
+                <CarouselItem key={index}>
+                  <Card>
+                    <CardContent className="flex aspect-square items-center justify-center p-6">
+                      <Image
+                        src={i}
+                        alt="Image product"
+                        width={500}
+                        height={500}
+                      />
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
+            <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
+          </Carousel>
         </div>
       </DrawerContent>
     </Drawer>
