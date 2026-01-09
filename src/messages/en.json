@@ -21,7 +21,14 @@
     "nudge": "Nudges",
     "NotFound": "Not Found",
     "NoResults": "No results.",
-    "showAnalytics": "Show analytics"
+    "showAnalytics": "Show analytics",
+    "rowsPerPage": "Rows per page",
+    "page": "Page",
+    "of": "of",
+    "goFirst": "Go to first page",
+    "goPrev": "Go to previous page",
+    "goNext": "Go to next page",
+    "goLast": "Go to last page"
   },
   "actions": {
     "delete": "Delete"
@@ -36,6 +43,7 @@
     "discount": "Discount",
     "discount_all": "All",
     "discount_with": "With discount",
+    "discount_without":"Without discount",
 
     "reviews": "Reviews",
     "reviews_all": "All ratings",
@@ -44,6 +52,7 @@
 
     "stock": "Min stock",
 
+    "price": "Price",
     "reset": "Reset",
     "apply": "Apply filters"
   },

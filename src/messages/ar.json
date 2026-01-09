@@ -21,7 +21,14 @@
     "nudge": "تنبيهات",
     "NotFound": "لا يوجد",
     "NoResults": "لا يوجد نتائج لعرضها",
-    "showAnalytics": "عرض الإحصائيات"
+    "showAnalytics": "عرض الإحصائيات",
+    "rowsPerPage": "عدد الصفوف في الصفحة",
+    "page": "صفحة",
+    "of": "من",
+    "goFirst": "اذهب إلى الصفحة الأولى",
+    "goPrev": "الصفحة السابقة",
+    "goNext": "الصفحة التالية",
+    "goLast": "اذهب إلى الصفحة الأخيرة"
   },
   "actions": {
     "delete": "حذف",
@@ -37,6 +44,7 @@
     "discount": "الخصم",
     "discount_all": "الكل",
     "discount_with": "مع خصم",
+    "discount_without": "بدون خصم",
 
     "reviews": "التقييم",
     "reviews_all": "كل التقييمات",
@@ -45,6 +53,7 @@
 
     "stock": "الكمية المتوفرة",
 
+    "price": "السعر",
     "reset": "إعادة تعيين",
     "apply": "تطبيق الفلاتر"
   },
