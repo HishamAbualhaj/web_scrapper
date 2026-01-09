@@ -29,7 +29,6 @@ import {
   IconChevronsRight,
   IconDotsVertical,
   IconGripVertical,
-  IconTrendingUp,
 } from "@tabler/icons-react";
 import {
   flexRender,
@@ -46,34 +45,27 @@ import {
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { z } from "zod";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import {
   Select,
   SelectContent,
@@ -81,7 +73,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -101,6 +92,16 @@ import {
 } from "./ui/carousel";
 import { Card, CardContent } from "./ui/card";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
 export const schema = z.object({
   storeId: z.string(),
@@ -139,113 +140,6 @@ function DragHandle({ id }: { id: string }) {
   );
 }
 
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.productId} />,
-  },
-  {
-    accessorKey: "storetitle",
-    header: ({ table }) => table.options.meta?.t?.("table.storetitle"),
-    cell: ({ row }) => row.original.storeName,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "title",
-    header: ({ table }) => table.options.meta?.t?.("table.title"),
-    cell: ({ row }) => (
-      <div className="max-w-55 line-clamp-1">
-        <TableCellViewer item={row.original} />
-      </div>
-    ),
-    enableHiding: false,
-  },
-
-  {
-    accessorKey: "price",
-    header: ({ table }) => table.options.meta?.t?.("table.price"),
-    cell: ({ row }) => row.original.price,
-  },
-
-  {
-    accessorKey: "oldPrice",
-    header: ({ table }) => table.options.meta?.t?.("table.oldPrice"),
-    cell: ({ row }) => row.original.originalPrice,
-  },
-
-  {
-    accessorKey: "discount",
-    header: ({ table }) => table.options.meta?.t?.("table.discount"),
-    cell: ({ row }) => row.original.discount,
-  },
-
-  {
-    accessorKey: "rating",
-    header: ({ table }) => table.options.meta?.t?.("table.rating"),
-    cell: ({ row }) => row.original.reviewCount,
-  },
-
-  {
-    accessorKey: "stock",
-    header: ({ table }) => table.options.meta?.t?.("table.stock"),
-    cell: ({ row, table }) =>
-      row.original.stockInfo ? (
-        row.original.stockInfo
-      ) : (
-        <div className="text-">{table.options.meta?.t?.("table.NotFound")}</div>
-      ),
-  },
-
-  {
-    accessorKey: "badge",
-    header: ({ table }) => table.options.meta?.t?.("table.badge"),
-    cell: ({ row, table }) => (
-      <div className="flex gap-1 flex-wrap">
-        {row.original.badge ? (
-          <Badge variant="outline">{row.original.badge}</Badge>
-        ) : (
-          <div className="text-center">
-            {table.options.meta?.t?.("table.NotFound")}
-          </div>
-        )}
-      </div>
-    ),
-  },
-
-  {
-    id: "actions",
-    cell: ({ row, table }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">
-              {table.options.meta?.t?.("actions.open")}
-            </span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <Link
-            href={`/dashboard?store=${row.original.storeId}&product=${row.original.productId}`}
-          >
-            <DropdownMenuItem>
-              {table.options.meta?.t?.("table.showAnalytics")}
-            </DropdownMenuItem>
-          </Link>
-          <DropdownMenuItem variant="destructive">
-            {table.options.meta?.t?.("actions.delete")}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-];
-
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.productId,
@@ -276,6 +170,121 @@ export function DataTable({
 }: {
   data: z.infer<typeof schema>[];
 }) {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [productName, setProductName] = React.useState<string>("");
+  const columns: ColumnDef<z.infer<typeof schema>>[] = [
+    {
+      id: "drag",
+      header: () => null,
+      cell: ({ row }) => <DragHandle id={row.original.productId} />,
+    },
+    {
+      accessorKey: "storetitle",
+      header: ({ table }) => table.options.meta?.t?.("table.storetitle"),
+      cell: ({ row }) => row.original.storeName,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "title",
+      header: ({ table }) => table.options.meta?.t?.("table.title"),
+      cell: ({ row }) => (
+        <div className="max-w-55 line-clamp-1">
+          <TableCellViewer item={row.original} />
+        </div>
+      ),
+      enableHiding: false,
+    },
+
+    {
+      accessorKey: "price",
+      header: ({ table }) => table.options.meta?.t?.("table.price"),
+      cell: ({ row }) => row.original.price,
+    },
+
+    {
+      accessorKey: "oldPrice",
+      header: ({ table }) => table.options.meta?.t?.("table.oldPrice"),
+      cell: ({ row }) => row.original.originalPrice,
+    },
+
+    {
+      accessorKey: "discount",
+      header: ({ table }) => table.options.meta?.t?.("table.discount"),
+      cell: ({ row }) => row.original.discount,
+    },
+
+    {
+      accessorKey: "rating",
+      header: ({ table }) => table.options.meta?.t?.("table.rating"),
+      cell: ({ row }) => row.original.reviewCount,
+    },
+
+    {
+      accessorKey: "stock",
+      header: ({ table }) => table.options.meta?.t?.("table.stock"),
+      cell: ({ row, table }) =>
+        row.original.stockInfo ? (
+          row.original.stockInfo
+        ) : (
+          <div className="text-">
+            {table.options.meta?.t?.("table.NotFound")}
+          </div>
+        ),
+    },
+
+    {
+      accessorKey: "badge",
+      header: ({ table }) => table.options.meta?.t?.("table.badge"),
+      cell: ({ row, table }) => (
+        <div className="flex gap-1 flex-wrap">
+          {row.original.badge ? (
+            <Badge variant="outline">{row.original.badge}</Badge>
+          ) : (
+            <div className="text-center">
+              {table.options.meta?.t?.("table.NotFound")}
+            </div>
+          )}
+        </div>
+      ),
+    },
+
+    {
+      id: "actions",
+      cell: ({ row, table }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+              size="icon"
+            >
+              <IconDotsVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-32">
+            <Link
+              href={`/dashboard?store=${row.original.storeId}&product=${row.original.productId}`}
+            >
+              <DropdownMenuItem>
+                {table.options.meta?.t?.("table.showAnalytics")}
+              </DropdownMenuItem>
+            </Link>
+
+            <DropdownMenuItem
+              onClick={() => {
+                setOpen(true);
+                setProductName(row.original.title);
+              }}
+              variant="destructive"
+            >
+              {table.options.meta?.t?.("actions.delete")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
+
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -346,6 +355,11 @@ export function DataTable({
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6"
     >
+      <DeleteDialog
+        productName={productName}
+        open={open}
+        onOpenChange={setOpen}
+      />
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto"
@@ -407,22 +421,24 @@ export function DataTable({
             </Table>
           </DndContext>
         </div>
+
         <div className="flex items-center justify-between px-4">
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
-              <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                Rows per page
-              </Label>
+              <label htmlFor="rows-per-page" className="text-sm font-medium">
+                {t("table.rowsPerPage")}
+              </label>
               <Select
-                value={`${table.getState().pagination.pageSize}`}
-                onValueChange={(value) => {
-                  table.setPageSize(Number(value));
-                }}
+                value={`${pagination.pageSize}`}
+                onValueChange={(value) =>
+                  setPagination((prev) => ({
+                    ...prev,
+                    pageSize: Number(value),
+                  }))
+                }
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                  <SelectValue
-                    placeholder={table.getState().pagination.pageSize}
-                  />
+                  <SelectValue placeholder={`${pagination.pageSize}`} />
                 </SelectTrigger>
                 <SelectContent side="top">
                   {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -433,68 +449,79 @@ export function DataTable({
                 </SelectContent>
               </Select>
             </div>
+
             <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
+              {t("table.page")} {pagination.pageIndex + 1} {t("table.of")}{" "}
+              {Math.ceil(data.length / pagination.pageSize)}
             </div>
-            <div className="ml-auto flex items-center gap-2 lg:ml-0">
+
+            <div dir="ltr" className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
                 variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
+                onClick={() => setPagination((p) => ({ ...p, pageIndex: 0 }))}
+                disabled={pagination.pageIndex === 0}
               >
-                <span className="sr-only">Go to first page</span>
+                <span className="sr-only">{t("table.goFirst")}</span>
                 <IconChevronsLeft />
               </Button>
               <Button
                 variant="outline"
                 className="size-8"
                 size="icon"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
+                onClick={() =>
+                  setPagination((p) => ({
+                    ...p,
+                    pageIndex: Math.max(p.pageIndex - 1, 0),
+                  }))
+                }
+                disabled={pagination.pageIndex === 0}
               >
-                <span className="sr-only">Go to previous page</span>
+                <span className="sr-only">{t("table.goPrev")}</span>
                 <IconChevronLeft />
               </Button>
               <Button
                 variant="outline"
                 className="size-8"
                 size="icon"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
+                onClick={() =>
+                  setPagination((p) => ({
+                    ...p,
+                    pageIndex: Math.min(
+                      p.pageIndex + 1,
+                      Math.ceil(data.length / pagination.pageSize) - 1
+                    ),
+                  }))
+                }
+                disabled={
+                  pagination.pageIndex >=
+                  Math.ceil(data.length / pagination.pageSize) - 1
+                }
               >
-                <span className="sr-only">Go to next page</span>
+                <span className="sr-only">{t("table.goNext")}</span>
                 <IconChevronRight />
               </Button>
               <Button
                 variant="outline"
                 className="hidden size-8 lg:flex"
                 size="icon"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
+                onClick={() =>
+                  setPagination((p) => ({
+                    ...p,
+                    pageIndex: Math.ceil(data.length / pagination.pageSize) - 1,
+                  }))
+                }
+                disabled={
+                  pagination.pageIndex >=
+                  Math.ceil(data.length / pagination.pageSize) - 1
+                }
               >
-                <span className="sr-only">Go to last page</span>
+                <span className="sr-only">{t("table.goLast")}</span>
                 <IconChevronsRight />
               </Button>
             </div>
           </div>
         </div>
-      </TabsContent>
-      <TabsContent
-        value="past-performance"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent
-        value="focus-documents"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
   );
@@ -549,7 +576,46 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
           </Carousel>
         </div>
+
+        <div className="flex gap-3 flex-wrap mt-5 px-5">
+          {item.nudges.map((nudge) => (
+            <Badge className="py-2! px-3!" variant="secondary" key={nudge}>
+              {nudge}
+            </Badge>
+          ))}
+        </div>
       </DrawerContent>
     </Drawer>
+  );
+}
+
+function DeleteDialog({
+  productName,
+  open,
+  onOpenChange,
+}: {
+  productName: string;
+  open: boolean;
+  onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const t = useTranslations("products.delete");
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTitle></DialogTitle>
+      <DialogContent className="sm:max-w-106.25">
+        <DialogHeader>
+          <DialogDescription className="font-bold">
+            {t("description", { name: productName })}
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">{t("cancel")}</Button>
+          </DialogClose>
+          <Button variant="destructive">{t("confirm")}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
