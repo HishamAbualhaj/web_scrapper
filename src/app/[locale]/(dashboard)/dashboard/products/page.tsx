@@ -24,6 +24,7 @@ const page = () => {
         </Button>
         {/* Store name */}
         <SelectStore
+          withUrlState
           stores={[
             {
               id: "s1",

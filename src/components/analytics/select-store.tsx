@@ -10,15 +10,24 @@ import {
 import type { Store } from "@/data/stores";
 import { useTranslations } from "next-intl";
 import { useQueryState } from "nuqs";
+import { Dispatch, SetStateAction } from "react";
 type Props = {
   stores: Store[];
+  setStore?: Dispatch<SetStateAction<string>>;
+  withUrlState?: boolean;
   value?: string;
   error?: string | null;
 };
 
-const SelectStore = ({ stores, value, error }: Props) => {
+const SelectStore = ({
+  stores,
+  value,
+  error,
+  withUrlState,
+  setStore,
+}: Props) => {
   const [storeId, setStoreId] = useQueryState("store", {
-    defaultValue: "general",
+    defaultValue: "all",
     shallow: true,
   });
 
@@ -28,7 +37,10 @@ const SelectStore = ({ stores, value, error }: Props) => {
     <div className="space-y-2 max-w-96">
       <div className="text-muted-foreground">{t("selectStore")}</div>
 
-      <Select value={value} onValueChange={setStoreId}>
+      <Select
+        value={value}
+        onValueChange={withUrlState ? setStoreId : setStore}
+      >
         <SelectTrigger
           className={`min-w-52 ${error ? "border-destructive" : ""}`}
         >
