@@ -1,7 +1,7 @@
-import cleanText from "./cleanText.js";
-import extractNudges from "./extractNudges.js";
-import extractSingleProductImages from "./extractSingleProductImages.js";
-import extractText from "./extractText.js";
+import cleanText from "./cleanText";
+import extractNudges from "./extractNudges";
+import extractSingleProductImages from "./extractSingleProductImages";
+import extractText from "./extractText";
 
 function extractSingleProduct(
   html: string,
@@ -62,7 +62,7 @@ function extractSingleProduct(
       title: cleanText(title),
       price: price || "N/A",
       oldPrice: oldPrice || "",
-      discount,
+      discount: discount || "",
       rating: rating || "",
       reviewCount: reviewCount || "",
       nudges: Array.from(texts),
