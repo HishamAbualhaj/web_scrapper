@@ -22,7 +22,7 @@ interface SingleProduct {
   productId: string;
   title: string;
   price: string;
-  oldPrice?: string;
+  oldPrice: string;
   discount: string;
   rating: string;
   reviewCount: string;

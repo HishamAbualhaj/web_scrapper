@@ -1,6 +1,6 @@
 import scrapeAllPages from "../helpers/scrapeAllPages";
 
-export default async function main(url: string) {
+export default async function scrapeStoreProducts(url: string) {
   let products: ProductDetails[] = [];
 
   try {
@@ -9,6 +9,8 @@ export default async function main(url: string) {
       maxRetries: 3,
       retryDelay: 1000,
     });
+
+    return products;
   } catch (error) {
     console.error(`\n❌ Error scraping ${url}:`, error);
   }
