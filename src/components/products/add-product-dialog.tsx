@@ -111,7 +111,6 @@ export const AddProductDialog = ({ open, onClose }: Props) => {
                   ],
                 },
               ]}
-              onChange={(storeId: string) => {}}
             />
           </div>
 

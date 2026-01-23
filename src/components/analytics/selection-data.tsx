@@ -8,7 +8,7 @@ const SelectionData = () => {
   const storeSelected = stores.find((s) => s.id === store);
   return (
     <div className="flex max-lg:flex-col gap-6">
-      <SelectStore stores={stores} value={store ?? ""} />
+      <SelectStore withUrlState={true} stores={stores} value={store ?? ""} />
 
       {store && (
         <SelectProduct

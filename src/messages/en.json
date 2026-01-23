@@ -43,7 +43,7 @@
     "discount": "Discount",
     "discount_all": "All",
     "discount_with": "With discount",
-    "discount_without":"Without discount",
+    "discount_without": "Without discount",
 
     "reviews": "Reviews",
     "reviews_all": "All ratings",
@@ -119,6 +119,21 @@
       "create": "Create a product",
       "selectStore": "Select a product"
     }
+  },
+  "scraping": {
+    "title": "Scraping Progress",
+    "active": "Fetching products in progress",
+    "completed": "Completed",
+    "start_sraping": "Starting product scraping...",
+    "not_found": "No products were found for this store.",
+    "products_found": "Found {total} products.",
+    "process_store": "Processing store information...",
+    "existing_store": "Using existing store.",
+    "create_store": "Creating new store...",
+    "store_created": "Store created successfully.",
+    "completion_status": "Processed {current} of {total} products.",
+    "completed_all": "All products have been processed successfully.",
+    "error": "An error occurred أثناء تنفيذ العملية."
   },
   "notFound": {
     "title": "Page Not Found",

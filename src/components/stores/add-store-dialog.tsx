@@ -8,39 +8,27 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Store, Link, Loader2 } from "lucide-react";
+import { Store, Link, Loader2, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useScrape } from "@/context/ScrapeContext";
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  isScraping: boolean;
 };
 
-export const AddStoreDialog = ({ open, onClose }: Props) => {
+export const AddStoreDialog = ({ open, onClose, isScraping }: Props) => {
   const t = useTranslations("stores");
+  const s = useTranslations("scraping");
   const [url, setUrl] = useState("");
   const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleUrlBlur = () => {
-    if (!name && url) {
-      try {
-        const hostname = new URL(url).hostname.replace("www.", "");
-        setName(hostname.split(".")[0]);
-      } catch {}
-    }
-  };
+  const { startScraping } = useScrape();
 
   const handleSubmit = async () => {
-    if (!url) return;
-
-    setLoading(true);
-
-    // API later
-    console.log({ url, name });
-
-    setLoading(false);
+    await startScraping(url, name);
     onClose();
   };
 
@@ -50,40 +38,45 @@ export const AddStoreDialog = ({ open, onClose }: Props) => {
         <DialogHeader>
           <DialogTitle>{t("addStore")}</DialogTitle>
         </DialogHeader>
-
-        <div className="space-y-4">
-          {/* Store URL */}
-          <div className="relative">
-            <Link className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={t("fields.urlPlaceholder")}
-              className="ps-9"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              onBlur={handleUrlBlur}
-            />
+        {isScraping ? (
+          <div className="flex justify-center gap-3 items-center mt-5">
+            <Loader2Icon size={19} className="animate-spin" />
+            <div className="text-xl font-medium">{s("active")}</div>
           </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Store URL */}
+            <div className="relative">
+              <Link className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("fields.urlPlaceholder")}
+                className="ps-9"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+            </div>
 
-          {/* Store Name (optional) */}
-          <div className="relative">
-            <Store className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={t("fields.nameOptional")}
-              className="ps-9"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            {/* Store Name (optional) */}
+            <div className="relative">
+              <Store className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("fields.nameOptional")}
+                className="ps-9"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
+            <Button
+              className="w-full"
+              disabled={!url || isScraping}
+              onClick={handleSubmit}
+            >
+              {isScraping && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+              {t("actions.create")}
+            </Button>
           </div>
-
-          <Button
-            className="w-full"
-            disabled={!url || loading}
-            onClick={handleSubmit}
-          >
-            {loading && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-            {t("actions.create")}
-          </Button>
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   );
