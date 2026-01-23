@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { localeDirection } from "@/i18n";
 import "@/styles/globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { ScrapeProvider } from "@/context/ScrapeContext";
+import ScrapeProgressUI from "@/components/scrape/ScrapeProgressUI";
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Dashboard management for products",
@@ -33,7 +35,12 @@ export default async function RootLayout({
     <html lang={locale} dir={dir}>
       <body className={`${cairo.variable} ${montserrat.variable}`}>
         <NuqsAdapter>
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          <NextIntlClientProvider>
+            <ScrapeProvider>
+              {children}
+              <ScrapeProgressUI />
+            </ScrapeProvider>
+          </NextIntlClientProvider>
         </NuqsAdapter>
       </body>
     </html>
