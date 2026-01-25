@@ -1,25 +1,17 @@
 import { StoresAnalyticsCharts } from "./analytics/stores-analytics-charts";
-export function ChartAreaInteractive() {
-  const stores = [
-    {
-      id: "1",
-      name: "Electronics",
-      productsCount: 24,
-      avgPrice: 1200,
-      avgDiscount: 15,
-    },
-    {
-      id: "2",
-      name: "Fashion",
-      productsCount: 12,
-      avgPrice: 80,
-      avgDiscount: 5,
-    },
-    { id: "3", name: "Toys", productsCount: 35, avgPrice: 50, avgDiscount: 10 },
-  ];
+interface ChartAreaInteractiveProps {
+  data: {
+    store_id: string;
+    store_name: string;
+    products_count: number;
+    avg_price: number;
+    avg_discount: number;
+  }[];
+}
+export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
   return (
     <div className="space-y-8">
-      <StoresAnalyticsCharts data={stores} />
+      <StoresAnalyticsCharts data={data} />
     </div>
   );
 }

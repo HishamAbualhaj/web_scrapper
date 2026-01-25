@@ -13,19 +13,25 @@ import {
 import { Package, Store, TrendingUp, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-export function SectionCards() {
+export function SectionCards({
+  total_products,
+  total_stores,
+}: {
+  total_products: number;
+  total_stores: number;
+}) {
   const t = useTranslations("cards");
   const stats = [
     {
       title: t("Total Products"),
-      value: "8",
+      value: total_products,
       icon: <Package className="h-5 w-5" />,
       color: "text-primary",
       bgColor: "bg-primary/10",
     },
     {
       title: t("Total Stores"),
-      value: "80",
+      value: total_stores,
       icon: <Store className="h-5 w-5" />,
       color: "text-primary",
       bgColor: "bg-primary/10",
