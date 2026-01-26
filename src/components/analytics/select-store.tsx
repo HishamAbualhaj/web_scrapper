@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Store } from "@/data/stores";
+import { Store } from "@/types/api/response";
 import { useTranslations } from "next-intl";
 import { useQueryState } from "nuqs";
 import { Dispatch, SetStateAction } from "react";
@@ -48,8 +48,8 @@ const SelectStore = ({
         </SelectTrigger>
         <SelectContent>
           {stores.map((store) => (
-            <SelectItem key={store.id} value={store.id}>
-              {store.title}
+            <SelectItem key={store.store_id} value={store.store_id}>
+              {store.store_name}
             </SelectItem>
           ))}
         </SelectContent>
