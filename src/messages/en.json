@@ -104,6 +104,7 @@
     "placeholder": "Choose product",
     "search": "Search product...",
     "noResults": "No products found",
+    "loading":"Loading products",
     "fields": {
       "urlPlaceholder": "Product ID (required)"
     },
