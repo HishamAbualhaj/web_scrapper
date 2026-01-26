@@ -25,25 +25,28 @@ export default async function Page() {
       },
     },
   );
+  let data;
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    console.error(errorData.error || `HTTP error! status: ${res.status}`);
+  let dataStores;
+
+  if (!res.ok || !resstores.ok) {
+    // const errorData = await res.json();
+    // console.error(errorData.error || `HTTP error! status: ${res.status}`);
+  } else {
+    data = await res.json();
+    dataStores = await resstores.json();
   }
-  const data = await res.json();
-
-  const dataStores = await resstores.json();
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
         <div className="flex flex-col gap-4 md:gap-6">
           <SectionCards
-            total_products={data.total_products}
-            total_stores={data.total_stores}
+            total_products={data?.total_products ?? 0}
+            total_stores={data?.total_stores ?? 0}
           />
           <div className="">
-            <ChartAreaInteractive data={dataStores} />
+            <ChartAreaInteractive data={dataStores ?? []} />
           </div>
           <div className="border rounded-md p-4">
             <SelectionData />
