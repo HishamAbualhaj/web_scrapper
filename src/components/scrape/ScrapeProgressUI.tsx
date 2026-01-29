@@ -17,13 +17,18 @@ export default function ScrapeProgressUI() {
   const { progress, isScraping, isVisible, hide, show, error } = useScrape();
 
   const locale = useLocale();
+  useEffect(() => {
+    if (isScraping) {
+      setMessages([]);
+    }
+  }, [isScraping]);
 
   useEffect(() => {
     if (error) {
       // If there's an error, add as error message
       setMessages((prev) => [
         ...prev.map((m) =>
-          m.status === "loading" ? { ...m, status: "completed" as const } : m
+          m.status === "loading" ? { ...m, status: "completed" as const } : m,
         ),
         { status: "error", msg: progress?.msgT || error, dataT: {} },
       ]);
@@ -32,28 +37,40 @@ export default function ScrapeProgressUI() {
     if (progress) {
       setMessages((prev) => {
         if (progress.type === "complete") {
-          return prev
-            .map((m) =>
-              m.status === "loading"
+          const updated = prev.map((m) =>
+            m.msg === "completion_status"
+              ? {
+                  ...m,
+                  status: "completed" as const,
+                  dataT: {
+                    total: progress.total,
+                    current: progress.current,
+                  },
+                }
+              : m.status === "loading"
                 ? { ...m, status: "completed" as const }
-                : m
-            )
-            .concat({
+                : m,
+          );
+
+          return [
+            ...updated,
+            {
               status: "completed",
-              msg: progress.msgT,
-              dataT: progress.data || {},
-            });
+              msg: progress.msgT, // completed_all
+              dataT: {},
+            },
+          ];
         }
 
         // 1️⃣ Mark all previous loading messages as completed
         const updated = prev.map((m) =>
-          m.status === "loading" ? { ...m, status: "completed" as const } : m
+          m.status === "loading" ? { ...m, status: "completed" as const } : m,
         );
 
         // 2️⃣ Special handling for completion_status
         if (progress.msgT === "completion_status") {
           const lastIndex = updated.findLastIndex(
-            (m) => m.msg === "completion_status"
+            (m) => m.msg === "completion_status",
           );
 
           // Update existing completion_status message
