@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Activity } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   isVisible: boolean;
@@ -16,7 +17,7 @@ export default function ScrapeFloatingButton({
 }: Props) {
   const positionClass =
     dir === "rtl" ? "fixed bottom-10 left-6" : "fixed bottom-10 right-6";
-
+  const t = useTranslations("scraping");
   return (
     <Button
       onClick={onShow}
@@ -29,7 +30,7 @@ export default function ScrapeFloatingButton({
         }`}
     >
       <Activity className="h-4 w-4 mr-2" />
-      Show Logs
+      {t("showlogs")}
     </Button>
   );
 }
