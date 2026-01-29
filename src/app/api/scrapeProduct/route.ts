@@ -29,7 +29,18 @@ export async function POST(req: NextRequest) {
     const productFound = await checkFoundProduct(productId);
     if (productFound) {
       return NextResponse.json(
-        { success: false, message: "Product already exists", data: [] },
+        {
+          success: true,
+          product_id: productFound,
+          productId: null,
+          productTitle: null,
+          results: {
+            productsProcessed: 0,
+            pricesRecorded: 0,
+            errors: ["product is already found"],
+            isFound: true,
+          },
+        },
         { status: 200 },
       );
     }
@@ -122,7 +133,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

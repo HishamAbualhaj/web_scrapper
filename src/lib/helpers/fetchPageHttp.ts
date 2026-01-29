@@ -17,7 +17,7 @@ function getRandomUserAgent(): string {
 
 async function fetchPage(
   url: string,
-  redirectCount: number = 0
+  redirectCount: number = 0,
 ): Promise<string> {
   const MAX_REDIRECTS = 5;
 
@@ -98,6 +98,8 @@ async function fetchPage(
 
       stream.on("end", () => {
         if (res.statusCode === 200) {
+          resolve(data);
+        } else if (res.statusCode === 404) {
           resolve(data);
         } else {
           reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
