@@ -7,6 +7,8 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ScrapeProvider } from "@/context/ScrapeContext";
 import ScrapeProgressUI from "@/components/scrape/ScrapeProgressUI";
 import ClientProviders from "@/lib/QueryClientProvider";
+
+import { Toaster } from "@/components/ui/sonner";
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Dashboard management for products",
@@ -40,6 +42,7 @@ export default async function RootLayout({
             <NextIntlClientProvider>
               <ScrapeProvider>
                 {children}
+                <Toaster />
                 <ScrapeProgressUI />
               </ScrapeProvider>
             </NextIntlClientProvider>

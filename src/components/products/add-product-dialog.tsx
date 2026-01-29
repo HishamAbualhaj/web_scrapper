@@ -8,11 +8,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Store, Link, Loader2 } from "lucide-react";
+import { Link, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Select, SelectContent, SelectTrigger } from "../ui/select";
 import SelectStore from "../analytics/select-store";
+import { useApiMutation } from "@/hooks/useApiMutation";
+import { scrapeSingleProductResponse } from "@/types/api/response";
+import { toast } from "sonner";
 
 type Props = {
   open: boolean;
@@ -21,30 +23,14 @@ type Props = {
 
 export const AddProductDialog = ({ open, onClose }: Props) => {
   const t = useTranslations("products");
-  const [url, setUrl] = useState("");
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const p = useTranslations("scraping");
+  const [productId, setProductId] = useState("");
+  const [store_id, setStoreId] = useState("");
 
-  const handleUrlBlur = () => {
-    if (!name && url) {
-      try {
-        const hostname = new URL(url).hostname.replace("www.", "");
-        setName(hostname.split(".")[0]);
-      } catch {}
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!url) return;
-
-    setLoading(true);
-
-    // API later
-    console.log({ url, name });
-
-    setLoading(false);
-    onClose();
-  };
+  const { mutateAsync, isPending } = useApiMutation<
+    scrapeSingleProductResponse,
+    { store_id: string; productId: string }
+  >();
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -60,66 +46,51 @@ export const AddProductDialog = ({ open, onClose }: Props) => {
             <Input
               placeholder={t("fields.urlPlaceholder")}
               className="ps-9"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              onBlur={handleUrlBlur}
+              value={productId}
+              onChange={(e) => setProductId(e.target.value)}
             />
           </div>
 
           {/* Store Name (optional) */}
           <div className="relative">
             <SelectStore
-              stores={[
-                {
-                  id: "1",
-                  title: "عام",
-                  products: [
-                    {
-                      id: "",
-                      title: "",
-                    },
-                  ],
-                },
-                {
-                  id: "2",
-                  title: "Store",
-                  products: [
-                    {
-                      id: "",
-                      title: "",
-                    },
-                  ],
-                },
-                {
-                  id: "3",
-                  title: "Store",
-                  products: [
-                    {
-                      id: "",
-                      title: "",
-                    },
-                  ],
-                },
-                {
-                  id: "4",
-                  title: "Store",
-                  products: [
-                    {
-                      id: "",
-                      title: "",
-                    },
-                  ],
-                },
-              ]}
+              setStore={(value) => {
+                setStoreId(value);
+              }}
+              value={store_id}
             />
           </div>
 
           <Button
             className="w-full"
-            disabled={!url || loading}
-            onClick={handleSubmit}
+            onClick={async () => {
+              if (isPending) return;
+              toast.promise(
+                () =>
+                  mutateAsync({
+                    apiUrl: "/api/scrapeProduct",
+                    method: "POST",
+                    body: { store_id, productId },
+                  }),
+                {
+                  loading: <div className="text-lg">{p("loading")}</div>,
+                  success: (data) => (
+                    <div className="text-lg">
+                      {data.results.isFound
+                        ? p(`scrape_single_product.productFound`)
+                        : p("scrape_single_product.scraping_done")}
+                    </div>
+                  ),
+                  error: (
+                    <div className="text-lg text-destructive/90!">
+                      {p("error")}
+                    </div>
+                  ),
+                },
+              );
+            }}
           >
-            {loading && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {isPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {t("actions.create")}
           </Button>
         </div>
