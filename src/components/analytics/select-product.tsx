@@ -35,7 +35,7 @@ const SelectProduct = ({ products, onSelect, isPending }: Props) => {
   const t = useTranslations();
   const [open, setOpen] = useState(false);
 
-  const [product] = useQueryState("product");
+  const [product, setProductId] = useQueryState("product");
   const selected = products?.find((p) => p.product_id === product);
 
   return (
@@ -77,6 +77,7 @@ const SelectProduct = ({ products, onSelect, isPending }: Props) => {
                   onSelect={() => {
                     setOpen(false);
                     onSelect(product.product_id);
+                    setProductId(product.product_id);
                   }}
                 >
                   {product.title}
