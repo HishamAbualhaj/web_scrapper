@@ -18,3 +18,16 @@ export interface ProductAnalytics {
   title: string;
   prices: ProductPricePoint[];
 }
+
+export interface scrapeSingleProductResponse {
+  success: boolean;
+  product_id: string;
+  productId: string;
+  productTitle: string;
+  results: {
+    productsProcessed: number;
+    pricesRecorded: number;
+    errors: string[];
+    isFound?: boolean;
+  };
+}
