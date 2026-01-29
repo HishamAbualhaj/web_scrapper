@@ -104,7 +104,7 @@
     "placeholder": "Choose product",
     "search": "Search product...",
     "noResults": "No products found",
-    "loading":"Loading products",
+    "loading": "Loading products",
     "fields": {
       "urlPlaceholder": "Product ID (required)"
     },
@@ -134,12 +134,22 @@
     "store_created": "Store created successfully.",
     "completion_status": "Processed {current} of {total} products.",
     "completed_all": "All products have been processed successfully.",
-    "error": "An error occurred أثناء تنفيذ العملية."
+    "error": "An error occurred",
+    "loading": "Loading",
+    "scrape_single_product": {
+      "start_sraping": "Scraping the current product",
+      "scraping_done": "Product has successfully been scraped",
+      "productFound": "Product is already there"
+    },
+    "showlogs": "Show Logs"
   },
   "notFound": {
     "title": "Page Not Found",
     "description": "Sorry, the page you are looking for does not exist or has been moved.",
     "action": "Go Back Home"
+  },
+  "state": {
+    "loading": "Loading"
   },
   "hello": "Welcome",
   "dashboard": "Dashboard",
