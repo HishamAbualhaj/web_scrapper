@@ -24,7 +24,7 @@ export async function apiFetcher<TResponse, TBody = unknown>(
     const error: ApiError = {
       message: data?.message || "Request failed",
       status: res.status,
-      errors: data?.errors,
+      errors: data?.error,
     };
     throw error;
   }
@@ -33,7 +33,7 @@ export async function apiFetcher<TResponse, TBody = unknown>(
     const error: ApiError = {
       message: data?.message || "Request failed",
       status: res.status,
-      errors: data?.errors,
+      errors: data?.error,
     };
     throw error;
   }
