@@ -8,12 +8,15 @@ import {
   ProductAnalytics,
   Store,
 } from "@/types/api/response";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { usePriceAnalyticsStore } from "@/zustand/priceAnalyticsStore";
 import { useQueryState } from "nuqs";
 import { useEffect } from "react";
 const SelectionData = () => {
   const [store] = useQueryState("store");
 
+  const [product, setProduct] = useQueryState("product");
+
+  const { setData, setPending } = usePriceAnalyticsStore();
   const { data: dataProducts, isPending } = useApiQuery<getProductsResponse[]>(
     ["products_selection", store],
     {
@@ -26,33 +29,34 @@ const SelectionData = () => {
     { enabled: !!store },
   );
 
-  const { data: dataStores } = useApiQuery<Store[]>(["stores"], {
-    apiUrl: "/api/analytics/stores",
-    method: "GET",
-  });
-
   const {
-    mutate,
-    isPending: isPendingProductPrice,
-    data,
-  } = useApiMutation<ProductAnalytics, { productId: string }>();
+    data: dataProductsAnalytics,
+    isFetching: isPendingProductPrice,
+  } = useApiQuery<ProductAnalytics>(
+    ["product_analytics", product],
+    {
+      apiUrl: "/api/getProductPrice",
+      method: "POST",
+      body: {
+        productId: product,
+      },
+    },
+    { enabled: !!product },
+  );
+
+  useEffect(() => {
+    if (dataProductsAnalytics) {
+      setData(dataProductsAnalytics);
+    }
+  }, [dataProductsAnalytics]);
+
+  useEffect(() => {
+    setPending(isPendingProductPrice);
+  }, [isPendingProductPrice]);
 
   return (
     <div className="flex max-lg:flex-col gap-6">
-      <SelectStore
-        withUrlState={true}
-        stores={
-          dataStores?.map(
-            ({ store_id, store_name, products_count, created_at }) => ({
-              store_id,
-              store_name,
-              products_count,
-              created_at,
-            }),
-          ) ?? []
-        }
-        value={store ?? ""}
-      />
+      <SelectStore withUrlState={true} />
 
       {store && (
         <SelectProduct
@@ -60,13 +64,7 @@ const SelectionData = () => {
           products={dataProducts ?? []}
           onSelect={(productId) => {
             if (isPendingProductPrice) return;
-            mutate({
-              apiUrl: "/api/getProductPrice",
-              method: "POST",
-              body: {
-                productId,
-              },
-            });
+            setProduct(productId);
           }}
         />
       )}

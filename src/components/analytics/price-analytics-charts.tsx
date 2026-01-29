@@ -1,5 +1,8 @@
 "use client";
+import { usePriceAnalyticsStore } from "@/zustand/priceAnalyticsStore";
+import { Loader2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -45,25 +48,19 @@ const PriceTooltipRTL = ({ active, payload, label }: TooltipProps) => {
 };
 
 const PriceAnalyticsCharts = () => {
-  const productsAnalytics: ProductAnalytics[] = [
-    {
-      id: "p1",
-      title: "iPhone 15 Pro",
-      prices: [
-        { date: "2025-01-01", price: 3000 },
-        { date: "2025-01-05", price: 4500 },
-        { date: "2025-01-10", price: 7000 },
-        { date: "2025-01-15", price: 8000 },
-        { date: "2025-01-20", price: 2000 },
-        { date: "2025-01-29", price: 400 },
-      ],
-    },
-  ];
+  const { data, isPending } = usePriceAnalyticsStore();
+  const t = useTranslations("state");
+
   return (
-    <div className="h-96 w-full mt-5">
+    <div className="h-96 w-full mt-5 relative">
+      {isPending && (
+        <div className="bg-primary/50 w-full h-full absolute z-10 rounded-md flex gap-2 justify-center items-center">
+          {t("loading")} <Loader2Icon size={20} className="animate-spin" />{" "}
+        </div>
+      )}
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
-          data={productsAnalytics[0].prices}
+          data={data ? data.prices : []}
           margin={{ top: 5, right: 5, left: -55, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
