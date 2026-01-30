@@ -28,6 +28,7 @@ const SelectStore = ({
 }: Props) => {
   const t = useTranslations("stores.actions");
 
+  const p = useTranslations("filter");
   // URL state (used ONLY when withUrlState === true)
   const [urlStore, setUrlStore] = useQueryState("store", {
     defaultValue: "all",
@@ -64,6 +65,7 @@ const SelectStore = ({
         </SelectTrigger>
 
         <SelectContent>
+          <SelectItem value="noStore">{p("nostore")}</SelectItem>
           {dataStores?.map((store) => (
             <SelectItem key={store.store_id} value={store.store_id}>
               {store.store_name}

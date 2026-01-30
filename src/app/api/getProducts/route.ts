@@ -8,19 +8,27 @@ export async function POST(req: NextRequest) {
 
     const { store_id } = await req.json();
 
+    let query = supabase
+      .from("products")
+      .select("product_id, store_id, title,external_product_id");
+
     if (!store_id) {
+      query = query.is("store_id", null);
       return NextResponse.json(
         { error: "store_id is required" },
         { status: 400 },
       );
     }
 
-    let query = supabase
-      .from("products")
-      .select("product_id, store_id, title,external_product_id")
-      .eq("store_id", store_id)
-      .order("created_at", { ascending: false });
-
+    if (store_id === "noStore") {
+      query = query
+        .is("store_id", null)
+        .order("created_at", { ascending: false });
+    } else {
+      query = query
+        .eq("store_id", store_id)
+        .order("created_at", { ascending: false });
+    }
     if (limitParam) {
       const limit = Number(limitParam);
       if (!Number.isNaN(limit)) {
