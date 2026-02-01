@@ -229,6 +229,7 @@ async function processBatch(products: ProductDetails[], storeUUID: string) {
       const productData = {
         external_product_id: product.productId,
         store_id: storeUUID,
+        store_title: product.storeName,
         title: product.title,
         price: price,
         original_price: originalPrice,
@@ -249,7 +250,7 @@ async function processBatch(products: ProductDetails[], storeUUID: string) {
       results.errors.push(
         `Product ${product.productId}: ${
           err instanceof Error ? err.message : "Unknown error"
-        }`
+        }`,
       );
     }
   }
@@ -326,7 +327,7 @@ async function processBatch(products: ProductDetails[], storeUUID: string) {
 
         if (historyError) {
           results.errors.push(
-            `Price history batch error: ${historyError.message}`
+            `Price history batch error: ${historyError.message}`,
           );
         } else if (insertedHistory) {
           results.pricesRecorded += insertedHistory.length;
