@@ -28,7 +28,8 @@
     "goFirst": "Go to first page",
     "goPrev": "Go to previous page",
     "goNext": "Go to next page",
-    "goLast": "Go to last page"
+    "goLast": "Go to last page",
+    "productLink": "Product Link"
   },
   "actions": {
     "delete": "Delete"
@@ -51,6 +52,7 @@
     "reviews_4": "4 & up",
 
     "stock": "Min stock",
+    "nostore": "No Store",
 
     "price": "Price",
     "reset": "Reset",
