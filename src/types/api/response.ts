@@ -1,3 +1,6 @@
+import { schema } from "@/components/data-table";
+import { z } from "zod";
+
 export interface getProductsResponse {
   product_id: string;
   store_id: string;
@@ -29,5 +32,16 @@ export interface scrapeSingleProductResponse {
     pricesRecorded: number;
     errors: string[];
     isFound?: boolean;
+  };
+}
+
+export interface getAllProductsResponse {
+  status: string;
+  data: z.infer<typeof schema>[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
   };
 }
