@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           message: error.message || "Failed to fetch products",
-          status: 500,
+          status: "failed",
           errors: error,
         },
         { status: 500 },
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         message: error?.message || "Request failed",
-        status: 500,
+        status: "failed",
         errors: error,
       },
       { status: 500 },

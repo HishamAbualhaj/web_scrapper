@@ -7,10 +7,32 @@ import { AddProductDialog } from "@/components/products/add-product-dialog";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import SelectStore from "@/components/analytics/select-store";
+import { useQueryStates, parseAsString, parseAsInteger } from "nuqs";
+import { DataTableFilters } from "@/types/products";
 
 const page = () => {
   const t = useTranslations("products");
   const [open, setOpen] = useState<boolean>(false);
+
+  const [filters] = useQueryStates({
+    store: parseAsString,
+    name: parseAsString,
+    badge: parseAsString,
+    discount: parseAsString,
+    min: parseAsInteger,
+    max: parseAsInteger,
+    stock: parseAsInteger,
+  });
+
+  const tableFilters: DataTableFilters = {
+    store: filters.store ?? undefined,
+    name: filters.name ?? undefined,
+    badge: filters.badge ?? undefined,
+    discount: filters.discount as "with" | "without" | undefined,
+    min: filters.min || undefined,
+    max: filters.max || undefined,
+    stock: filters.stock || undefined,
+  };
 
   return (
     <>
@@ -34,7 +56,7 @@ const page = () => {
       />
       <ProductTableFilters />
       <div className="py-5">
-        <DataTable data={data} />
+        <DataTable filters={tableFilters} />
       </div>
     </>
   );

@@ -12,14 +12,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { parseAsString, useQueryState, useQueryStates } from "nuqs";
 
-export type ProductFilters = {
-  name: string;
-  badge: "all" | "best" | "popular";
-  discount: "all" | "with" | "without";
-  minStock: number;
-  minPrice: number;
-  maxPrice: number;
-};
 
 export default function ProductTableFilters() {
   const t = useTranslations("filter");
@@ -46,12 +38,12 @@ export default function ProductTableFilters() {
 
   const [, setFilters] = useQueryStates({
     name: parseAsString.withDefault(""),
-    badge: parseAsString.withDefault("all"),
-    discount: parseAsString.withDefault("all"),
+    badge: parseAsString.withDefault(""),
+    discount: parseAsString.withDefault(""),
     min: parseAsString.withDefault(""),
     max: parseAsString.withDefault(""),
     stock: parseAsString.withDefault(""),
-    store: parseAsString.withDefault("all"),
+    store: parseAsString.withDefault(""),
   });
   const resetAll = () => setFilters(null);
 

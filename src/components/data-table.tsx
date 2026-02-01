@@ -102,22 +102,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import { useQuery } from "@tanstack/react-query";
+import { useApiQuery } from "@/hooks/useApiQuery";
+import { getAllProductsResponse } from "@/types/api/response";
+import fetchProducts from "@/lib/server/fetchProducts";
+import { DataTableFilters } from "@/types/products";
+import { Loader2 } from "lucide-react";
+import { parseAsInteger, useQueryState } from "nuqs";
 
 export const schema = z.object({
-  storeId: z.string(),
-  storeName: z.string(),
-  productId: z.string(),
+  product_id: z.string().uuid(),
+  store_id: z.string().uuid(),
   title: z.string(),
-  originalPrice: z.string(),
-  price: z.string(),
-  discount: z.string(),
-  rating: z.string(),
-  reviewCount: z.string(),
-  stockInfo: z.string(),
-  images: z.array(z.string()),
-  productUrl: z.string(),
-  badge: z.string(),
+  store_title: z.string(),
+
+  price: z.number(),
+  original_price: z.number(),
+  discount: z.number(),
+
+  rating: z.number(),
+  review_count: z.number(),
+
+  images: z.array(z.string().url()),
   nudges: z.array(z.string()),
+
+  product_url: z.string().url(),
+
+  badge: z.string().nullable(),
+  stock_info: z.string().nullable(),
+  extracted_stock: z.number().nullable(),
+
+  external_product_id: z.string(),
+
+  created_at: z.string().datetime(),
+  updated_at: z.string().datetime(),
 });
 
 // Create a separate component for the drag handle
@@ -142,7 +160,7 @@ function DragHandle({ id }: { id: string }) {
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.productId,
+    id: row.original.product_id,
   });
 
   return (
@@ -165,23 +183,28 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   );
 }
 
-export function DataTable({
-  data: initialData,
-}: {
-  data: z.infer<typeof schema>[];
-}) {
+export function DataTable({ filters }: { filters?: DataTableFilters }) {
+  const [pageParam, setPageParam] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1),
+  );
+  const [limitParam, setLimitParam] = useQueryState(
+    "limit",
+    parseAsInteger.withDefault(10),
+  );
+
   const [open, setOpen] = React.useState<boolean>(false);
   const [productName, setProductName] = React.useState<string>("");
   const columns: ColumnDef<z.infer<typeof schema>>[] = [
     {
       id: "drag",
       header: () => null,
-      cell: ({ row }) => <DragHandle id={row.original.productId} />,
+      cell: ({ row }) => <DragHandle id={row.original.product_id} />,
     },
     {
       accessorKey: "storetitle",
       header: ({ table }) => table.options.meta?.t?.("table.storetitle"),
-      cell: ({ row }) => row.original.storeName,
+      cell: ({ row }) => row.original.store_title,
       enableHiding: false,
     },
     {
@@ -204,7 +227,7 @@ export function DataTable({
     {
       accessorKey: "oldPrice",
       header: ({ table }) => table.options.meta?.t?.("table.oldPrice"),
-      cell: ({ row }) => row.original.originalPrice,
+      cell: ({ row }) => row.original.original_price,
     },
 
     {
@@ -216,15 +239,15 @@ export function DataTable({
     {
       accessorKey: "rating",
       header: ({ table }) => table.options.meta?.t?.("table.rating"),
-      cell: ({ row }) => row.original.reviewCount,
+      cell: ({ row }) => row.original.rating,
     },
 
     {
       accessorKey: "stock",
       header: ({ table }) => table.options.meta?.t?.("table.stock"),
       cell: ({ row, table }) =>
-        row.original.stockInfo ? (
-          row.original.stockInfo
+        row.original.stock_info ? (
+          row.original.stock_info
         ) : (
           <div className="text-">
             {table.options.meta?.t?.("table.NotFound")}
@@ -263,7 +286,7 @@ export function DataTable({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
             <Link
-              href={`/dashboard?store=${row.original.storeId}&product=${row.original.productId}`}
+              href={`/dashboard?store=${row.original.store_id}&product=${row.original.product_id}`}
             >
               <DropdownMenuItem>
                 {table.options.meta?.t?.("table.showAnalytics")}
@@ -285,12 +308,12 @@ export function DataTable({
     },
   ];
 
-  const [data, setData] = React.useState(() => initialData);
+  // const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
@@ -301,17 +324,45 @@ export function DataTable({
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
+    useSensor(KeyboardSensor, {}),
   );
 
   const t = useTranslations();
+
+  // Fetch data with React Query
+  const {
+    data: apiResponse,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+  } = useApiQuery<getAllProductsResponse>(
+    ["products", pageParam, limitParam, filters],
+    {
+      apiUrl: fetchProducts(pageParam, limitParam, filters),
+      method: "GET",
+    },
+  );
+
+  // Local state for drag and drop reordering
+  const [localData, setLocalData] = React.useState<z.infer<typeof schema>[]>(
+    [],
+  );
+
+  // Update local data when API data changes
+  React.useEffect(() => {
+    if (apiResponse?.data) {
+      setLocalData(apiResponse.data);
+    }
+  }, [apiResponse?.data]);
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ productId }) => productId) || [],
-    [data]
+    () => localData?.map(({ product_id }) => product_id) || [],
+    [localData],
   );
 
   const table = useReactTable({
-    data,
+    data: localData,
     columns,
     meta: {
       t,
@@ -323,7 +374,7 @@ export function DataTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.productId.toString(),
+    getRowId: (row) => row.product_id.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -341,7 +392,7 @@ export function DataTable({
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
-      setData((data) => {
+      setLocalData((data) => {
         const oldIndex = dataIds.indexOf(active.id);
         const newIndex = dataIds.indexOf(over.id);
         return arrayMove(data, oldIndex, newIndex);
@@ -349,6 +400,18 @@ export function DataTable({
     }
   }
   const locale = useLocale();
+
+  // Pagination handlers
+  const handlePageChange = (newPage: number) => {
+    setPageParam(newPage);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimitParam(newLimit);
+    setPageParam(1); // Reset to first page when changing limit
+  };
+
+  const totalPages = apiResponse?.pagination.totalPages || 1;
 
   return (
     <Tabs
@@ -364,7 +427,7 @@ export function DataTable({
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto"
       >
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-hidden rounded-lg border relative">
           <DndContext
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis]}
@@ -389,7 +452,7 @@ export function DataTable({
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
@@ -397,6 +460,7 @@ export function DataTable({
                   </TableRow>
                 ))}
               </TableHeader>
+
               <TableBody className="**:data-[slot=table-cell]:first:w-8">
                 {table.getRowModel().rows?.length ? (
                   <SortableContext
@@ -407,11 +471,18 @@ export function DataTable({
                       <DraggableRow key={row.id} row={row} />
                     ))}
                   </SortableContext>
+                ) : isLoading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-40 text-center"
+                    ></TableCell>
+                  </TableRow>
                 ) : (
                   <TableRow>
                     <TableCell
                       colSpan={columns.length}
-                      className="h-24 text-center"
+                      className="h-40 text-center"
                     >
                       {t("table.NoResults")}
                     </TableCell>
@@ -420,6 +491,12 @@ export function DataTable({
               </TableBody>
             </Table>
           </DndContext>
+          {isLoading && (
+            <div className="flex items-center justify-center gap-2 absolute bg-gray-200/50 z-10 left-0 top-0 w-full h-full">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span className="ml-2">{t("state.loading")}</span>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between px-4">
@@ -429,13 +506,8 @@ export function DataTable({
                 {t("table.rowsPerPage")}
               </label>
               <Select
-                value={`${pagination.pageSize}`}
-                onValueChange={(value) =>
-                  setPagination((prev) => ({
-                    ...prev,
-                    pageSize: Number(value),
-                  }))
-                }
+                value={`${limitParam}`}
+                onValueChange={(value) => handleLimitChange(Number(value))}
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
                   <SelectValue placeholder={`${pagination.pageSize}`} />
@@ -451,16 +523,20 @@ export function DataTable({
             </div>
 
             <div className="flex w-fit items-center justify-center text-sm font-medium">
-              {t("table.page")} {pagination.pageIndex + 1} {t("table.of")}{" "}
-              {Math.ceil(data.length / pagination.pageSize)}
+              {t("table.page")} {pageParam} {t("table.of")}{" "}
+              {isLoading ? (
+                <Loader2 className="h-3 w-3 mx-2 animate-spin" />
+              ) : (
+                totalPages
+              )}
             </div>
 
             <div dir="ltr" className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
                 variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => setPagination((p) => ({ ...p, pageIndex: 0 }))}
-                disabled={pagination.pageIndex === 0}
+                onClick={() => handlePageChange(1)}
+                disabled={pageParam === 1 || isLoading}
               >
                 <span className="sr-only">{t("table.goFirst")}</span>
                 <IconChevronsLeft />
@@ -469,13 +545,8 @@ export function DataTable({
                 variant="outline"
                 className="size-8"
                 size="icon"
-                onClick={() =>
-                  setPagination((p) => ({
-                    ...p,
-                    pageIndex: Math.max(p.pageIndex - 1, 0),
-                  }))
-                }
-                disabled={pagination.pageIndex === 0}
+                onClick={() => handlePageChange(Math.max(pageParam - 1, 1))}
+                disabled={pageParam === 1 || isLoading}
               >
                 <span className="sr-only">{t("table.goPrev")}</span>
                 <IconChevronLeft />
@@ -484,19 +555,8 @@ export function DataTable({
                 variant="outline"
                 className="size-8"
                 size="icon"
-                onClick={() =>
-                  setPagination((p) => ({
-                    ...p,
-                    pageIndex: Math.min(
-                      p.pageIndex + 1,
-                      Math.ceil(data.length / pagination.pageSize) - 1
-                    ),
-                  }))
-                }
-                disabled={
-                  pagination.pageIndex >=
-                  Math.ceil(data.length / pagination.pageSize) - 1
-                }
+                onClick={() => handlePageChange(pageParam + 1)}
+                disabled={pageParam >= totalPages || isLoading}
               >
                 <span className="sr-only">{t("table.goNext")}</span>
                 <IconChevronRight />
@@ -505,16 +565,8 @@ export function DataTable({
                 variant="outline"
                 className="hidden size-8 lg:flex"
                 size="icon"
-                onClick={() =>
-                  setPagination((p) => ({
-                    ...p,
-                    pageIndex: Math.ceil(data.length / pagination.pageSize) - 1,
-                  }))
-                }
-                disabled={
-                  pagination.pageIndex >=
-                  Math.ceil(data.length / pagination.pageSize) - 1
-                }
+                onClick={() => handlePageChange(totalPages)}
+                disabled={pageParam >= totalPages || isLoading}
               >
                 <span className="sr-only">{t("table.goLast")}</span>
                 <IconChevronsRight />
@@ -584,6 +636,14 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             </Badge>
           ))}
         </div>
+
+        <Link
+          target="_blank"
+          className="text-center mt-5 text-xl border py-4 mx-4 rounded-lg hover:bg-muted"
+          href={item.product_url}
+        >
+          {t("table.productLink")}
+        </Link>
       </DrawerContent>
     </Drawer>
   );
