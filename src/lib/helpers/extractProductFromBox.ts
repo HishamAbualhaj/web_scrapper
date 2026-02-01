@@ -3,37 +3,40 @@ import extractAllMatches from "./extractAllMatches";
 import extractText from "./extractText";
 function extractProductFromBox(productBox: string): ProductDetails | null {
   try {
-    // Extract Product ID,
-    const hrefPattern = /href="([^"]*)"/;
-    const productUrlPath = extractText(productBox, hrefPattern);
-
-    // Extract product ID (format: N70035206V)
+    // Extract Product URL from <a> tag inside data-qa="plp-product-box"
     let productId = "";
-    let productUrl = undefined;
+    let productUrl = "";
 
-    // Validate this is a product URL (not pagination)
-    if (
-      productUrlPath &&
-      !productUrlPath.includes("?page=") &&
-      productUrlPath.includes("/p")
-    ) {
+    const hrefPattern =
+      /<a class="PBoxLinkHandler[^"]*productBoxLink" href="([^"]*)"/;
+    const hrefMatch = productBox.match(hrefPattern);
+
+    if (hrefMatch) {
+      const productUrlPath = hrefMatch[1];
+
+      // Extract product ID from URL (format: /N70161558V/)
       const idPattern = /\/(N\d+[A-Z]+)\//;
       const idMatch = productUrlPath.match(idPattern);
-      productId = idMatch ? idMatch[1] : "";
+
+      if (idMatch) {
+        productId = idMatch[1];
+      }
+
+      // Build complete URL
       productUrl = productUrlPath.startsWith("http")
         ? productUrlPath
         : `https://www.noon.com${productUrlPath}`;
-    } else {
-      // Try to find product link more carefully
-      const productLinkPattern = /href="(\/[^"]*\/N\d+[A-Z]+\/p[^"]*)"/;
-      const productLinkMatch = productBox.match(productLinkPattern);
+    }
 
-      if (productLinkMatch) {
-        const validPath = productLinkMatch[1];
-        const idPattern = /\/(N\d+[A-Z]+)\//;
-        const idMatch = validPath.match(idPattern);
-        productId = idMatch ? idMatch[1] : "";
-        productUrl = `https://www.noon.com${validPath}`;
+    // Fallback: Extract product ID from image URLs if href fails
+    if (!productId) {
+      const imageIdPattern =
+        /https:\/\/f\.nooncdn\.com\/p\/pnsku\/(N\d+[A-Z]+)\//;
+      const imageIdMatch = productBox.match(imageIdPattern);
+
+      if (imageIdMatch) {
+        productId = imageIdMatch[1];
+        productUrl = `https://www.noon.com/saudi-ar/product/${productId}/p/`;
       }
     }
 
@@ -46,13 +49,12 @@ function extractProductFromBox(productBox: string): ProductDetails | null {
     }
 
     // Extract price
-    const pricePattern =
-      /<strong class="[^"]*Price[^"]*amount[^"]*">([^<]*)<\/strong>/;
+    const pricePattern = /<strong class="[^"]*amount[^"]*">([^<]+)<\/strong>/;
     const price = extractText(productBox, pricePattern);
 
     // Extract original price
     const originalPricePattern =
-      /<span class="[^"]*oldPrice[^"]*">([^<]*)<\/span>/;
+      /<span class="[^"]*oldPrice[^"]*">([^<]+)<\/span>/;
     const originalPrice = extractText(productBox, originalPricePattern);
 
     // Calculate discount
@@ -62,23 +64,20 @@ function extractProductFromBox(productBox: string): ProductDetails | null {
       const originalNum = parseFloat(originalPrice.replace(/,/g, ""));
       if (!isNaN(priceNum) && !isNaN(originalNum) && originalNum > priceNum) {
         discount = `${Math.round(
-          ((originalNum - priceNum) / originalNum) * 100
+          ((originalNum - priceNum) / originalNum) * 100,
         )}%`;
       }
     }
 
     // Extract rating
-    // ✅ Rating
-    const ratingPattern =
-      /<div class="RatingPreviewStar-module-scss-module__[^"]*__textCtr">([^<]*)<\/div>/;
+    const ratingPattern = /class="[^"]*__textCtr">([0-9.]+)<\/div>/;
     const rating = extractText(productBox, ratingPattern);
 
     // Extract review count
-    const reviewCountPattern =
-      /<div class="[^"]*countCtr[^"]*">[\s\S]*?<span>([^<]+)<\/span>/;
+    const reviewCountPattern = /countCtr[^"]*">[\s\S]*?<span>([^<]+)<\/span>/;
     const reviewCount = extractText(productBox, reviewCountPattern);
 
-    // Extract images - support both old and new formats
+    // Extract images - support both formats
     const images: string[] = [];
 
     // Pattern 1: New format (pnsku)
@@ -91,7 +90,7 @@ function extractProductFromBox(productBox: string): ProductDetails | null {
       }
     }
 
-    // Pattern 2: Old format (v1234567/N12345_1.jpg)
+    // Pattern 2: Old format
     if (images.length === 0) {
       const imagePattern2 =
         /<img[^>]+src="(https:\/\/f\.nooncdn\.com\/p\/v\d+\/N\d+[A-Z]+_\d+\.jpg[^"]*)"/g;
@@ -102,32 +101,36 @@ function extractProductFromBox(productBox: string): ProductDetails | null {
       }
     }
 
-    // Pattern 3: Any noon image
+    // Pattern 3: Any noon product image (excluding icons)
     if (images.length === 0) {
       const imagePattern3 =
         /<img[^>]+src="(https:\/\/f\.nooncdn\.com\/p\/[^"]+\.jpg[^"]*)"/g;
       while ((imgMatch = imagePattern3.exec(productBox)) !== null) {
-        if (!images.includes(imgMatch[1])) {
-          images.push(imgMatch[1]);
+        const url = imgMatch[1];
+        if (!url.includes("/icons/") && !url.includes("/noon/images/")) {
+          if (!images.includes(url)) {
+            images.push(url);
+          }
         }
       }
     }
 
     // Extract badge
     const badgePattern =
-      /<span class="[^"]*BestSellerTag[^"]*text[^"]*">([^<]*)<\/span>/;
+      /<span class="[^"]*BestSellerTag[^"]*text[^"]*">([^<]+)<\/span>/;
     const badge = extractText(productBox, badgePattern);
 
-    // Extract all nudges
-    const nudgePattern = /<div class="[^"]*nudgeText[^"]*">([^<]*)<\/div>/g;
+    // Extract nudges
+    const nudgePattern = /<div class="[^"]*nudgeText[^"]*">([^<]+)<\/div>/g;
     const nudges = extractAllMatches(productBox, nudgePattern).filter(
-      (nudge, index, self) => self.indexOf(nudge) === index
+      (nudge, index, self) => self.indexOf(nudge) === index,
     );
 
     // Extract stock info
-    const stockInfo = nudges.find(
-      (nudge) => nudge.includes("المخزون") || nudge.includes("وحد")
-    );
+    const stockInfo =
+      nudges.find(
+        (nudge) => nudge.includes("المخزون") || nudge.includes("وحد"),
+      ) || "";
 
     return {
       storeId: "",
@@ -143,7 +146,7 @@ function extractProductFromBox(productBox: string): ProductDetails | null {
       productUrl: productUrl,
       badge: badge || "",
       nudges: nudges,
-      stockInfo: stockInfo || "",
+      stockInfo: stockInfo,
     };
   } catch (error) {
     console.error("Error extracting product from box:", error);
