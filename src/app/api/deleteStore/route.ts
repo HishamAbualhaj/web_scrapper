@@ -1,7 +1,7 @@
 import { supabase } from "@/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
   try {
     const { store_id } = await req.json();
 
