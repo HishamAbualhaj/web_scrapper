@@ -5,8 +5,10 @@ import ScrapeProgressCard from "@/components/scrape/ScrapeProgressCard";
 import ScrapeFloatingButton from "@/components/scrape/ScrapeFloatingButton";
 import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ScrapeProgressUI() {
+  const client = useQueryClient();
   const [messages, setMessages] = useState<
     {
       status: "loading" | "completed" | "error";
@@ -18,6 +20,9 @@ export default function ScrapeProgressUI() {
 
   const locale = useLocale();
   useEffect(() => {
+    client.invalidateQueries({
+      queryKey: ["stores"],
+    });
     if (isScraping) {
       setMessages([]);
     }
