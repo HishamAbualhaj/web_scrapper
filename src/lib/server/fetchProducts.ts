@@ -1,4 +1,4 @@
-;import { DataTableFilters } from "@/types/products";
+import { DataTableFilters } from "@/types/products";
 
 function fetchProducts(
   page: number,
