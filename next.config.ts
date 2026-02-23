@@ -3,7 +3,12 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["f.nooncdn.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "f.nooncdn.com",
+      },
+    ],
   },
 };
 
