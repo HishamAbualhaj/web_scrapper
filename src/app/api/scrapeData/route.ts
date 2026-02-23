@@ -101,6 +101,7 @@ export async function POST(request: NextRequest) {
                 external_store_id: externalStoreId,
                 name: extractedStoreName,
                 created_at: new Date().toISOString(),
+                store_url: storeUrl,
               },
             ])
             .select()

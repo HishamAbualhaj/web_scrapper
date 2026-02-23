@@ -6,9 +6,10 @@ function extractStoreData(link: string, html: string): (string | null)[] {
 
   const storeName = extractText(storeFullName || "", /^(.*?)\s*\|/);
 
-  const storeIdRegex = /\/(p-\d+)\//;
 
-  const storeId = extractText(link, storeIdRegex);
+  const url = new URL(link);
+  const match = url.pathname.match(/p-\d+/);
+  const storeId = match?.[0] ?? null;
 
   return [storeId, storeName];
 }
