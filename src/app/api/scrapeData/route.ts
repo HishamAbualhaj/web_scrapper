@@ -261,7 +261,7 @@ async function processBatch(products: ProductDetails[], storeUUID: string) {
     const { data: upsertedProducts, error: upsertError } = await supabase
       .from("products")
       .upsert(productsToUpsert, {
-        onConflict: "external_product_id",
+        onConflict: "external_product_id,store_id",
         ignoreDuplicates: false,
       })
       .select("product_id, external_product_id, price, discount");
