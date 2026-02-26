@@ -8,11 +8,12 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { ChartColumnDecreasing } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function NavMain({
   items,
@@ -30,12 +31,21 @@ export function NavMain({
   const segment = pathname.split("/")[3];
   const isAnalyticsActive = !segment;
 
+  const router = useRouter();
+
+  const { setOpenMobile } = useSidebar();
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <Link className="w-full" href={`/${pathname.split("/")[1]}/dashboard`}>
+          <SidebarMenuItem className="flex items-center gap-2 cursor-pointer!">
+            <div
+              onClick={() => {
+                router.push(`/${pathname.split("/")[1]}/dashboard`);
+                setOpenMobile(false)
+              }}
+              className="w-full cursor-pointer"
+            >
               <SidebarMenuButton
                 tooltip="Quick Create"
                 className={`text-gray-900 py-5 ${
@@ -45,13 +55,19 @@ export function NavMain({
                 <ChartColumnDecreasing />
                 <span>{t("analytics")}</span>
               </SidebarMenuButton>
-            </Link>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <Link href={item.url}>
+            <SidebarMenuItem key={item.title} className="cursor-pointer!">
+              <div
+                onClick={() => {
+                  router.push(item.url);
+                  setOpenMobile(false)
+                }}
+                className="cursor-pointer"
+              >
                 <SidebarMenuButton
                   className={`text-gray-900 py-5 ${
                     item.isActive && "bg-primary"
@@ -61,7 +77,7 @@ export function NavMain({
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                 </SidebarMenuButton>
-              </Link>
+              </div>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

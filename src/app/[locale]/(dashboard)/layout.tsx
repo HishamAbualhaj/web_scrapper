@@ -21,7 +21,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       <SidebarInset>
         <SiteHeader />
         <DirectionProvider dir={locale === "ar" ? "rtl" : "ltr"}>
-          <div className="p-10">{children}</div>
+          <div className="lg:p-10 p-5">{children}</div>
         </DirectionProvider>
       </SidebarInset>
     </SidebarProvider>
