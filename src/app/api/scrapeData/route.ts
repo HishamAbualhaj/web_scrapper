@@ -30,9 +30,11 @@ export async function POST(request: NextRequest) {
           percentage: 0,
         });
 
-        const scrapedProducts = await scrapeStoreProducts(storeUrl);
+        // const scrapedProducts = await scrapeStoreProducts(storeUrl);
 
-        if (!scrapedProducts || scrapedProducts.length === 0) {
+        const rawScrapedProducts = await scrapeStoreProducts(storeUrl);
+
+        if (!rawScrapedProducts || rawScrapedProducts.length === 0) {
           sendSSE(controller, {
             type: "error",
             message: "No products found from the provided store URL",
@@ -41,6 +43,16 @@ export async function POST(request: NextRequest) {
           controller.close();
           return;
         }
+
+        const seen = new Set<string>();
+        const scrapedProducts = rawScrapedProducts.filter((p) => {
+          if (seen.has(p.productId)) return false;
+          seen.add(p.productId);
+          return true;
+        });
+
+        const duplicatesRemoved =
+          rawScrapedProducts.length - scrapedProducts.length;
 
         const totalProducts = scrapedProducts.length;
         sendSSE(controller, {
@@ -220,8 +232,15 @@ async function processBatch(products: ProductDetails[], storeUUID: string) {
 
   const productsToUpsert: any[] = [];
 
+  const seen = new Set<string>();
+  const uniqueProducts = products.filter((p) => {
+    if (seen.has(p.productId)) return false;
+    seen.add(p.productId);
+    return true;
+  });
+
   // Prepare all product data for upsert
-  for (const product of products) {
+  for (const product of uniqueProducts) {
     try {
       const price = parseNumericValue(product.price);
       const originalPrice = parseNumericValue(product.originalPrice);

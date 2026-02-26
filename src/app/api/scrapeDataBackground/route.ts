@@ -16,16 +16,26 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const scrapedProducts = await scrapeStoreProducts(storeUrl);
+    const rawScrapedProducts = await scrapeStoreProducts(storeUrl);
 
-    if (!scrapedProducts || scrapedProducts.length === 0) {
+    if (!rawScrapedProducts || rawScrapedProducts.length === 0) {
       return NextResponse.json(
         { message: "No Products Found" },
         { status: 404 },
       );
     }
 
+    const seen = new Set<string>();
+    const scrapedProducts = rawScrapedProducts.filter((p) => {
+      if (seen.has(p.productId)) return false;
+      seen.add(p.productId);
+      return true;
+    });
+
     const totalProducts = scrapedProducts.length;
+
+    const duplicatesRemoved =
+      rawScrapedProducts.length - scrapedProducts.length;
 
     // Step 2: Handle store
     const externalStoreId = scrapedProducts[0].storeId;
@@ -97,6 +107,8 @@ export async function POST(request: NextRequest) {
           errors: results.errors,
         },
         products: scrapedProducts,
+        numberOfProducts: totalProducts,
+        removedDuplicates: duplicatesRemoved,
       },
       { status: 200 },
     );
@@ -118,8 +130,15 @@ async function processBatch(products: ProductDetails[], storeUUID: string) {
 
   const productsToUpsert: any[] = [];
 
+  const seen = new Set<string>();
+  const uniqueProducts = products.filter((p) => {
+    if (seen.has(p.productId)) return false;
+    seen.add(p.productId);
+    return true;
+  });
+
   // Prepare all product data for upsert
-  for (const product of products) {
+  for (const product of uniqueProducts) {
     try {
       const price = parseNumericValue(product.price);
       const originalPrice = parseNumericValue(product.originalPrice);
