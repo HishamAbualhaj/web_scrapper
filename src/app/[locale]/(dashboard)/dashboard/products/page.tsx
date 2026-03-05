@@ -1,6 +1,5 @@
 "use client";
 import { DataTable } from "@/components/data-table";
-import data from "../data.json";
 import ProductTableFilters from "@/components/products/filter-products";
 import { Button } from "@/components/ui/button";
 import { AddProductDialog } from "@/components/products/add-product-dialog";
