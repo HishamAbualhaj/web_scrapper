@@ -31,6 +31,23 @@
     "goLast": "Go to last page",
     "productLink": "Product Link"
   },
+  "priceChanges": {
+    "filterByStore": "Filter by Store",
+    "allStores": "All Stores",
+    "legend": {
+      "dropped": "Price Dropped",
+      "increased": "Price Increased"
+    },
+    "table": {
+      "storeName": "Store",
+      "product": "Product",
+      "previousPrice": "Previous Price",
+      "currentPrice": "Current Price",
+      "priceDiff": "Difference",
+      "changePercentage": "Change",
+      "recordedAt": "Recorded At"
+    }
+  },
   "actions": {
     "delete": "Delete"
   },
@@ -53,6 +70,7 @@
 
     "stock": "Min stock",
     "nostore": "No Store",
+    "all": "All Stores",
 
     "price": "Price",
     "reset": "Reset",

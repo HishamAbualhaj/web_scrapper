@@ -31,6 +31,23 @@
     "goLast": "اذهب إلى الصفحة الأخيرة",
     "productLink": "رابط المنتج"
   },
+  "priceChanges": {
+    "filterByStore": "تصفية حسب المتجر",
+    "allStores": "جميع المتاجر",
+    "legend": {
+      "dropped": "انخفض السعر",
+      "increased": "ارتفع السعر"
+    },
+    "table": {
+      "storeName": "المتجر",
+      "product": "المنتج",
+      "previousPrice": "السعر السابق",
+      "currentPrice": "السعر الحالي",
+      "priceDiff": "الفرق",
+      "changePercentage": "نسبة التغيير",
+      "recordedAt": "تاريخ التسجيل"
+    }
+  },
   "actions": {
     "delete": "حذف",
     "open": "افتح"
@@ -54,6 +71,7 @@
 
     "stock": "الكمية المتوفرة",
     "nostore": "بدون متجر",
+    "all": "جميع المتاجر",
 
     "price": "السعر",
     "reset": "إعادة تعيين",

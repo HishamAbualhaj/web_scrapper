@@ -1,6 +1,7 @@
 import PriceAnalyticsCharts from "@/components/analytics/price-analytics-charts";
 import SelectionData from "@/components/analytics/selection-data";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+import PriceChangesTable from "@/components/productsPriceChange/PriceChangeTable";
 
 import { SectionCards } from "@/components/section-cards";
 
@@ -50,6 +51,7 @@ export default async function Page() {
           </div>
           <div className="border rounded-md p-4">
             <SelectionData />
+            <PriceChangesTable />
             <PriceAnalyticsCharts />
           </div>
         </div>

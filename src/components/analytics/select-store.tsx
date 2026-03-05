@@ -27,20 +27,25 @@ const SelectStore = ({
   setStore,
 }: Props) => {
   const t = useTranslations("stores.actions");
-
   const p = useTranslations("filter");
-  // URL state (used ONLY when withUrlState === true)
+
   const [urlStore, setUrlStore] = useQueryState("store", {
     defaultValue: "all",
     shallow: true,
   });
 
-  const { data: dataStores } = useApiQuery<Store[]>(["stores"], {
-    apiUrl: "/api/analytics/stores",
-    method: "GET",
-  });
+  // ✅ staleTime: Infinity — stores list never changes mid-session,
+  //    prevents refetch every time parent re-renders
+  const { data: dataStores } = useApiQuery<Store[]>(
+    ["stores"],
+    {
+      apiUrl: "/api/analytics/stores",
+      method: "GET",
+    },
+    { staleTime: Infinity },
+  );
 
-  const selectValue = withUrlState ? urlStore : value || undefined; // undefined → placeholder
+  const selectValue = withUrlState ? urlStore : value || undefined;
 
   const handleChange = (val: string) => {
     if (withUrlState) {
@@ -66,6 +71,7 @@ const SelectStore = ({
 
         <SelectContent>
           <SelectItem value="noStore">{p("nostore")}</SelectItem>
+          <SelectItem value="all">{p("all")}</SelectItem>
           {dataStores?.map((store) => (
             <SelectItem key={store.store_id} value={store.store_id}>
               {store.store_name}
